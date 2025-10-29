@@ -1,0 +1,130 @@
+.footer {
+  margin-top: 4rem;
+  padding: 3.5rem 1.5rem 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba(13, 17, 23, 0.95),
+    rgba(25, 32, 45, 0.9)
+  );
+  border-top: 1px solid rgba(88, 166, 255, 0.2);
+  color: var(--footer-text);
+}
+
+.footerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: minmax(220px, 260px) minmax(320px, 1fr);
+  align-items: start;
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  background: rgba(16, 24, 36, 0.6);
+  border: 1px solid rgba(88, 166, 255, 0.15);
+  border-radius: 14px;
+}
+
+.navTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(201, 209, 217, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.navLink {
+  color: rgba(201, 209, 217, 0.85);
+  text-decoration: none;
+  font-weight: 500;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.navLink:hover {
+  color: var(--accent);
+  transform: translateX(6px);
+}
+
+.connectColumn {
+  max-width: 480px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.connectIntro {
+  margin: 0;
+  color: rgba(201, 209, 217, 0.75);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding: 0 0.25rem;
+}
+
+.bottomBar {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(88, 166, 255, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.copyright {
+  margin: 0 auto;
+  color: rgba(148, 162, 178, 0.75);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 1.25rem 1.5rem;
+  }
+
+  .footerInner {
+    gap: 2rem;
+  }
+
+  .footerNav,
+  .connectColumn {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .bottomBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .footerInner {
+    grid-template-columns: 1fr;
+  }
+
+  .connectColumn {
+    margin-left: 0;
+  }
+}

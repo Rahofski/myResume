@@ -1,0 +1,158 @@
+/* MainPage specific styles */
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 20px rgba(90, 120, 255, 0.2);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.container > :last-child {
+  margin-bottom: 0px;
+}
+
+.about {
+  margin-bottom: 2rem;
+}
+
+.contacts {
+  margin-bottom: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.sectionTitle {
+  border-left: 4px solid var(--primary-color);
+  padding-left: 10px;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  box-shadow: 0px 0px 20px rgba(90, 120, 255, 0.1);
+}
+
+.profilePhoto {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 5px solid var(--accent);
+  box-shadow: 0px 0px 25px rgba(88, 166, 255, 0.6);
+  transition:
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+.profilePhoto:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 0px 35px rgba(88, 166, 255, 0.9);
+}
+
+.profileInfo {
+  flex: 1;
+  color: var(--text-color);
+}
+
+.profileInfo h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 1rem; /* Добавляем отступ снизу */
+}
+
+.description {
+  font-size: 16px;
+  color: #c9d1d9; /* Более темный цвет для лучшей видимости */
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.skillsList,
+.educationList,
+.hobbiesList {
+  list-style: none;
+  padding: 0;
+}
+
+.skillsList li,
+.educationList li,
+.hobbiesList li {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 15px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.skillsList li:hover,
+.educationList li:hover,
+.hobbiesList li:hover {
+  background: var(--primary-color);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.contactLink {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.contactLink:hover {
+  color: #fff;
+  text-shadow: 0px 0px 10px rgba(88, 166, 255, 0.8);
+}
+
+.contacts p {
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+@media (max-width: 600px) {
+  .profile {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .connectForm {
+    padding: 1.5rem;
+  }
+
+  .input,
+  .textarea {
+    padding: 0.8rem 1rem;
+  }
+
+  .submitButton {
+    align-self: stretch;
+  }
+}

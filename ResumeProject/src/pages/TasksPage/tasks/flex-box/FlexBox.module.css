@@ -1,0 +1,276 @@
+.taskPage {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.taskContent {
+  padding: 1.75rem;
+  background: rgba(13, 17, 23, 0.65);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  border-radius: 18px;
+  box-shadow: 0 14px 38px rgba(9, 17, 31, 0.35);
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  width: 100%;
+}
+.picture {
+  width: 300px;
+  height: 300px;
+  min-width: 200px;
+  flex-shrink: 0;
+  border: 0.1em solid black;
+  background: linear-gradient(to bottom, #6ec8fa, #ffffbe);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.firstCar {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+}
+
+.firstCar p {
+  position: absolute;
+  top: -1.5em;
+  font-size: 0.7em;
+  font-weight: bold;
+  color: #3c6092;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease-in-out;
+}
+
+.secondCar {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.5s ease-in-out;
+  pointer-events: none;
+}
+.bodywork {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+.bodywork img {
+  width: 100%;
+  transition: transform 0.1s ease;
+}
+
+.squirell { 
+  position: absolute;
+  top: 12%;
+  left: 30%;
+  width: 30%;
+  height: auto;
+  z-index: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease-in-out;
+}
+
+.squirell img {
+  width: 80%;
+}
+
+.wheels {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 59%;
+  z-index: 3;
+}
+
+.wheels img {
+  width: 36%;
+  margin-left: 0.5em;
+}
+
+.wheels img:nth-child(2) {
+  margin-left: 1.9em;
+}
+
+.picture:hover .squirell,
+.picture:hover .firstCar p {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.picture:active .firstCar {
+  display: none;
+}
+
+.picture:active .secondCar {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.picture:hover .bodywork img {
+  animation: shakeBody 0.2s ease-in-out infinite;
+}
+
+.wheels:hover img {
+  animation: rotateWheel 0.5s linear infinite;
+}
+
+/* Keyframe для вращения колес */
+@keyframes rotateWheel {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Keyframe для тряски кузова */
+@keyframes shakeBody {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+}
+
+/* Стили для второй машины */
+.bodywork2 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.bodywork2 img {
+  width: 100%;
+}
+
+.bodywork2 p {
+  position: absolute;
+  right: -1.5em;
+  top: 25%;
+  transform: translateY(-50%);
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #3c6092;
+  white-space: nowrap;
+}
+
+.squirell2 {
+  position: absolute;
+  top: 72%;
+  left: 60%;
+  width: 30%;
+  height: auto;
+  z-index: 5;
+}
+
+.squirell2 img {
+  width: 120%;
+}
+
+.picture:active .firstCar {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.5s ease-in-out;
+}
+
+.picture:active .secondCar {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.picture:active .squirell2 {
+  animation: squirrelEscape 2s ease-in-out forwards;
+}
+
+.picture:active {
+  animation: shakePicture 0.5s linear infinite;
+}
+
+@keyframes shakePicture {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes squirrelEscape {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: translate(-2em, -0.5em);
+    opacity: 1;
+  }
+  40% {
+    transform: translate(-4em, 0.5em);
+    opacity: 1;
+  }
+  60% {
+    transform: translate(-6em, -0.5em);
+    opacity: 0.9;
+  }
+  80% {
+    transform: translate(-8em, 0.3em);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-10em, 0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .taskContent {
+    padding: 1.5rem;
+  }
+
+  .picture {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+@media (max-width: 520px) {
+  .taskContent {
+    padding: 1.25rem;
+  }
+
+  .picture {
+    width: 220px;
+    height: 220px;
+  }
+}

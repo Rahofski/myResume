@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap");
+
+.logo {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1rem, 3vw, 2.5rem);
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  font-family: "Poppins", sans-serif;
+  color: #f5f9ff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.35),
+      rgba(0, 0, 0, 0) 60%
+    ),
+    linear-gradient(135deg, #071e3d 0%, #1f4287 50%, #278ea5 100%);
+  box-shadow:
+    0 20px 38px -20px rgba(8, 27, 73, 0.6),
+    0 12px 18px -14px rgba(34, 154, 204, 0.55);
+  z-index: 1200;
+}
+
+.logo::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background: conic-gradient(
+    from 140deg,
+    #66a6ff 0%,
+    #89f7fe 35%,
+    #d9fdfa 70%,
+    #66a6ff 100%
+  );
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 24px;
+  background: radial-gradient(
+    circle at 70% 30%,
+    rgba(255, 255, 255, 0.55),
+    rgba(10, 35, 64, 0.85) 75%
+  );
+  box-shadow:
+    inset 0 12px 18px -16px rgba(255, 255, 255, 0.9),
+    inset 0 -12px 20px -16px rgba(0, 0, 0, 0.65);
+  z-index: 1;
+}
+
+.logo__mark,
+.logo__tagline {
+  position: relative;
+  z-index: 2;
+}
+
+.logo__mark {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.logo__tagline {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  padding-left: 0.28em;
+  background: linear-gradient(90deg, #89f7fe, #66a6ff);
+  background-clip: text;
+  color: transparent;
+}

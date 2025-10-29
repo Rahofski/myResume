@@ -1,0 +1,122 @@
+/* Dialog Styles */
+.dialogOverlay {
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.dialogContent {
+  background: var(--card-bg) !important;
+  border: 1px solid #30363d !important;
+  color: var(--text-color) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+  padding: 2rem !important;
+}
+
+.dialogHeader {
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dialogTitle {
+  color: var(--accent) !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+}
+
+.dialogDescription {
+  color: #8b949e !important;
+}
+
+.formField {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  color: var(--text-color) !important;
+  font-weight: 500 !important;
+}
+
+.formInput, .formTextarea, .formSelect {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(88, 166, 255, 0.3) !important;
+  color: var(--text-color) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+}
+
+.formInput:focus, .formTextarea:focus, .formSelect:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.formInput::placeholder, .formTextarea::placeholder {
+  color: rgba(139, 148, 158, 0.7) !important;
+}
+
+.formSelect option {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.dialogFooter {
+  border-top: 1px solid #30363d;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.cancelButton {
+  background: transparent !important;
+  border: 1px solid #30363d !important;
+  color: #8b949e !important;
+}
+
+.cancelButton:hover {
+  background: #30363d !important;
+  color: var(--text-color) !important;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent) 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.submitButton:hover {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-color) 100%) !important;
+}
+
+/* View Mode Styles */
+.viewValue {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  color: var(--text-color);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .dialogContent {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .dialogContent {
+    padding: 1rem !important;
+  }
+}
