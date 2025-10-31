@@ -23,7 +23,7 @@ const ProjectsPage: React.FC = () => {
         "Личный сайт-портфолио, демонстрирующий мои проекты и навыки.",
       technologies: ["React", "TypeScript", "CSS"],
       githubUrl: "https://github.com/Rahofski/portfolio",
-      image: ["public/res1.png", "public/res2.png"],
+      image: ["/res1.png", "/res2.png"],
     },
     {
       id: 2,
@@ -31,7 +31,7 @@ const ProjectsPage: React.FC = () => {
       description: "Веб-приложение для управления расписанием и задачами.",
       technologies: ["React", "Next.js", "ShadCN", "TypeScript"],
       githubUrl: "https://github.com/Rahofski/schedule",
-      image: ["public/schedule1.png", "public/schedule2.png"],
+      image: ["/schedule1.png", "/schedule2.png"],
     },
     {
       id: 3,
@@ -54,7 +54,7 @@ const ProjectsPage: React.FC = () => {
       description: "Веб-приложение для управления сотрудниками и промоакциями.",
       technologies: ["React", "TypeScript", "Tailwind CSS", "Next", "Tanstack"],
       githubUrl: "https://github.com/Rahofski/YandexPromoService",
-      image: ["public/yandex1.png", "public/yandex2.png"],
+      image: ["/yandex1.png", "/yandex2.png"],
     },
   ];
 

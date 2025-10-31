@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   useLocation,
@@ -23,7 +23,6 @@ function ScrollToTop() {
     if (hash) {
       return;
     }
-
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname, hash]);
 
