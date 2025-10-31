@@ -23,23 +23,23 @@ export const FlexBox = () => {
             <div className={styles.firstCar}>
               <p>Новое путешествие!</p>
               <div className={styles.bodywork}>
-                <img src="/car2.png" alt="Кузов машины" />
+                <img src="/myResume/car2.png" alt="Кузов машины" />
               </div>
               <div className={styles.squirell}>
-                <img src="/car4.png" alt="Белка" />
+                <img src="/myResume/car4.png" alt="Белка" />
               </div>
               <div className={styles.wheels}>
-                <img src="/car3.png" alt="Левое колесо" />
-                <img src="/car3.png" alt="Правое колесо" />
+                <img src="/myResume/car3.png" alt="Левое колесо" />
+                <img src="/myResume/car3.png" alt="Правое колесо" />
               </div>
             </div>
             <div className={styles.secondCar}>
               <div className={styles.bodywork2}>
-                <img src="/car1.png" alt="Кузов машины" />
+                <img src="/myResume/car1.png" alt="Кузов машины" />
                 <p>Приехали)</p>
               </div>
               <div className={styles.squirell2}>
-                <img src="/car5.png" alt="Белка" />
+                <img src="/myResume/car5.png" alt="Белка" />
               </div>
             </div>
           </section>
@@ -50,23 +50,23 @@ export const FlexBox = () => {
             <div className={styles.firstCar}>
               <p>Новое путешествие!</p>
               <div className={styles.bodywork}>
-                <img src="/car2.png" alt="Кузов машины" />
+                <img src="/myResume/car2.png" alt="Кузов машины" />
               </div>
               <div className={styles.squirell}>
-                <img src="/car4.png" alt="Белка" />
+                <img src="/myResume/car4.png" alt="Белка" />
               </div>
               <div className={styles.wheels}>
-                <img src="/car3.png" alt="Левое колесо" />
-                <img src="/car3.png" alt="Правое колесо" />
+                <img src="/myResume/car3.png" alt="Левое колесо" />
+                <img src="/myResume/car3.png" alt="Правое колесо" />
               </div>
             </div>
             <div className={styles.secondCar}>
               <div className={styles.bodywork2}>
-                <img src="/car1.png" alt="Кузов машины" />
+                <img src="/myResume/car1.png" alt="Кузов машины" />
                 <p>Приехали)</p>
               </div>
               <div className={styles.squirell2}>
-                <img src="/car5.png" alt="Белка" />
+                <img src="/myResume/car5.png" alt="Белка" />
               </div>
             </div>
           </section>
