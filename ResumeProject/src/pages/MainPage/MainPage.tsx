@@ -82,7 +82,7 @@ const MainPage: React.FC = () => {
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
         <Header />
-        <About photoSrc="/me.png" sectionId="about" />
+        <About photoSrc="/myResume/me.png" sectionId="about" />
         <Skills skillCategories={skillsData} sectionId="skills" />
         <Education educationItems={educationData} sectionId="education" />
         <Hobbies hobbies={hobbiesData} sectionId="hobbies" />

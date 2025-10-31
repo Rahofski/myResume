@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { TasksContext, type Task } from "./useContext";
 
-const TASKS_STORAGE_KEY = "resume-tasks";
+const TASKS_STORAGE_KEY = "resue-tasks";
 
 // Хелперы для работы с localStorage
 const loadTasksFromStorage = (): Task[] => {
@@ -24,7 +24,7 @@ const loadTasksFromStorage = (): Task[] => {
       technologies: ["HTML5", "CSS3", "Responsive Design"],
       status: "Выполнено",
       completionDate: "18.09.2025",
-      demoUrl: "/tasks/picture-task",
+      demoUrl: "#/tasks/picture-task",
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ const loadTasksFromStorage = (): Task[] => {
       technologies: ["HTML5", "CSS3", "Flexbox"],
       status: "В процессе",
       completionDate: "05.10.2025",
-      demoUrl: "/tasks/flexbox-task",
+      demoUrl: "#/tasks/flexbox-task",
     },
   ];
 };

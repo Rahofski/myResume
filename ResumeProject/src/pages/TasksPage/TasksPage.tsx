@@ -1,11 +1,33 @@
 import React from "react";
-import { TaskCard } from "./components/TaskCard";
 import { Header } from "./components/Header";
+import { TaskCard } from "./components/TaskCard";
 import styles from "./TasksPage.module.css";
-import { useTasks } from "@/contexts/useContext";
+import type { Task } from "@/contexts/useContext";
 
 const TasksPage: React.FC = () => {
-  const { tasks } = useTasks();
+  // const { tasks } = useTasks();
+
+  const tasks = [
+    {
+      id: 1,
+      title: "CSS Рисунок",
+      description:
+        "Создание сложного рисунка с использованием только HTML и CSS",
+      technologies: ["HTML5", "CSS3", "Responsive Design"],
+      status: "Выполнено",
+      completionDate: "18.09.2025",
+      demoUrl: "#/tasks/picture-task",
+    } as Task,
+    {
+      id: 2,
+      title: "Флексбокс анимация",
+      description: "Создание анимации на CSS",
+      technologies: ["HTML5", "CSS3", "Flexbox"],
+      status: "В процессе",
+      completionDate: "05.10.2025",
+      demoUrl: "#/tasks/flexbox-task",
+    } as Task,
+  ];
 
   return (
     <div className={styles.tasksPage}>

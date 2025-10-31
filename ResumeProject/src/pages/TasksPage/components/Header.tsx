@@ -1,7 +1,5 @@
-import { Plus } from "lucide-react";
 import { useState } from "react";
 import styles from "../TasksPage.module.css";
-import { Button } from "@/components/ui/button";
 import { TaskModal } from "./TaskModal";
 
 export const Header = () => {
@@ -13,7 +11,7 @@ export const Header = () => {
         <h1>Учебные задания</h1>
         <p>Практические задания с курса "Вёрстка и прототипирование сайтов"</p>
       </div>
-      <div className={styles.headerActions}>
+      {/* <div className={styles.headerActions}>
         <Button 
           className={styles.addTaskButton}
           onClick={() => setModalOpen(true)}
@@ -21,7 +19,7 @@ export const Header = () => {
           <Plus size={18} />
           Добавить задание
         </Button>
-      </div>
+      </div> */}
       
       <TaskModal
         isOpen={modalOpen}
