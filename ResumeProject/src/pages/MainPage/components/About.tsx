@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from '../MainPage.module.css';
+import React from "react";
+import styles from "../MainPage.module.css";
 
 interface AboutProps {
   photoSrc: string;
@@ -15,12 +15,12 @@ const About: React.FC<AboutProps> = ({ photoSrc, sectionId }) => {
         <div className={styles.profileInfo}>
           <h3>Рахов Роман</h3>
           <p className={styles.description}>
-            <em>"Родиться глупым не стыдно, стыдно только умирать глупцом"</em> — Эрих Мария Ремарк
-          </p>
-          <p className={styles.description}>
-            Я студент СПбПУ, Фронтенд-разработчик с опытом работы с <strong>современными веб-технологиями</strong>. 
-            Разрабатываю <strong>frontend и backend</strong>-системы, работаю с базами данных и облачными сервисами. 
-            Постоянно совершенствуюсь, изучаю новые технологии и работаю над собственными проектами.
+            <blockquote>
+              <em>
+                «Родиться глупым не стыдно, стыдно только умирать глупцом»
+              </em>
+            </blockquote>
+            <cite>— Эрих Мария Ремарк</cite>
           </p>
         </div>
       </div>

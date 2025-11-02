@@ -1,15 +1,6 @@
-import React, { useState } from "react";
-import { Trash2, ExternalLink } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React from "react";
+import { ExternalLink } from "lucide-react";
 import styles from "./TaskCard.module.css";
-import { useTasks } from "@/contexts/useContext";
-import { TaskModal } from "./TaskModal";
 
 export interface TaskCardProps {
   id: number;
@@ -35,7 +26,6 @@ const getStatusColor = (status: string) => {
 };
 
 export const TaskCard: React.FC<TaskCardProps> = ({
-  id: taskID,
   title,
   description,
   technologies,
@@ -43,61 +33,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   completionDate,
   demoUrl,
 }) => {
-  const { deleteTask, updateTask } = useTasks();
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const currentTask = {
-    id: taskID,
-    title,
-    description,
-    technologies,
-    status,
-    completionDate,
-    demoUrl,
-  };
-
-  const handleStatusChange = (newStatus: string) => {
-    const completionDate = newStatus === "Выполнено" 
-      ? new Date().toLocaleDateString('ru-RU') 
-      : undefined;
-    
-    updateTask(taskID, { 
-      status: newStatus as "Выполнено" | "В процессе" | "Запланировано",
-      completionDate 
-    });
-  };
-
-  const handleCardClick = () => {
-    setModalOpen(true);
-  };
   const cardContent = (
-    <div className={styles.taskCard} onClick={handleCardClick}>
+    <div className={styles.taskCard}>
       <div className={styles.taskHeader}>
         <h3 className={styles.taskTitle}>{title}</h3>
         <div className={styles.taskBadges}>
-          <div onClick={(e) => e.stopPropagation()}>
-            <Select value={status} onValueChange={handleStatusChange}>
-              <SelectTrigger className={`${styles.statusBadge} ${getStatusColor(status)} ${styles.statusSelect}`}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className={styles.selectContent}>
-                <SelectItem value="Запланировано">Запланировано</SelectItem>
-                <SelectItem value="В процессе">В процессе</SelectItem>
-                <SelectItem value="Выполнено">Выполнено</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <button
-            className={styles.deleteButton}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              deleteTask(taskID);
-            }}
-            title="Удалить задание"
+          <span
+            aria-label={`Статус задачи: ${status}`}
+            className={`${styles.statusBadge} ${getStatusColor(status)}`}
           >
-            <Trash2 size={16} />
-          </button>
+            {status}
+          </span>
         </div>
       </div>
 
@@ -132,7 +78,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               className={styles.demoLink}
               onClick={(e) => e.stopPropagation()}
             >
-              <ExternalLink size={16} style={{ marginRight: '0.5rem' }} />
+              <ExternalLink size={16} style={{ marginRight: "0.5rem" }} />
               Просмотреть демо
             </a>
           </div>
@@ -141,15 +87,5 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     </div>
   );
 
-  return (
-    <>
-      {cardContent}
-      <TaskModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        task={currentTask}
-        mode="edit"
-      />
-    </>
-  );
+  return cardContent;
 };

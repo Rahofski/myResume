@@ -6,6 +6,7 @@ import Education from "./components/Education";
 import Header from "./components/Header";
 import Hobbies from "./components/Hobbies";
 import Skills from "./components/Skills";
+import ExtendedAbout from "./components/ExtendedAbout";
 import styles from "./MainPage.module.css";
 
 // Данные для резюме
@@ -13,7 +14,7 @@ const skillsData = [
   {
     title: "Fullstack Development",
     items: [
-      "Frontend: HTML5, CSS3, JS, React, Next.js, Zod, Zustand, Redux",
+      "Frontend: HTML5, CSS3, JS, React, Next.js, Zod, Zustand, Redux, Tanstack, Jest, Playwright, i188n, a11y",
       "Backend: Go (Fiber, Gin), MongoDB, PostgreSQL",
       "API: REST",
     ],
@@ -87,6 +88,7 @@ const MainPage: React.FC = () => {
         <Education educationItems={educationData} sectionId="education" />
         <Hobbies hobbies={hobbiesData} sectionId="hobbies" />
         <Contacts contacts={contactsData} sectionId="contacts" />
+        <ExtendedAbout />
       </div>
     </div>
   );
