@@ -7,6 +7,8 @@ import type { Task } from "@/contexts/useContext";
 const TasksPage: React.FC = () => {
   // const { tasks } = useTasks();
 
+  const demoBase = "/myResume/"
+
   const tasks = [
     {
       id: 1,
@@ -26,6 +28,26 @@ const TasksPage: React.FC = () => {
       status: "В процессе",
       completionDate: "05.10.2025",
       demoUrl: "#/tasks/flexbox-task",
+    } as Task,
+    {
+      id: 3,
+      title: "DOM-викторина",
+      description:
+        "Интерактивный тест по лексике на чистом HTML, CSS и JavaScript",
+      technologies: ["HTML5", "CSS3", "JavaScript"],
+      status: "Выполнено",
+      completionDate: "02.11.2025",
+      demoUrl: `${demoBase}dom.html`,
+    } as Task,
+    {
+      id: 4,
+      title: "Формулы программирования",
+      description:
+        "Шпаргалка по базовым формулам и сокращениям с интерактивной подсветкой",
+      technologies: ["HTML5", "CSS3", "JavaScript"],
+      status: "Выполнено",
+      completionDate: "06.11.2025",
+      demoUrl: `${demoBase}formulas.html`,
     } as Task,
   ];
 
