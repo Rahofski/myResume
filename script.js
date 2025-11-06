@@ -28,23 +28,62 @@ const resultBlock = document.querySelector(".resultBlock");
 
 returnButton.addEventListener("click", () => {
   returnButton.classList.remove("show");
-  if (quizFinished) {
-    showQuestionList();
-  }
+  showAllQuestions();
 });
 
-function showCurrentQuestion() {
-  if (currentQuestionIndex >= shuffledQuestions.length) {
-    quizFinished = true;
-    showResults();
-    return;
+function showAllQuestions() {
+  questionBlock.innerHTML = "";
+
+  if (quizFinished) {
+    questionTitle.textContent = "Результаты теста";
+    resultBlock.innerHTML = `<div class="result-text">Правильных ответов: ${correctAnswers} из ${shuffledQuestions.length}</div>`;
+    resultBlock.style.display = "block";
+  } else {
+    questionTitle.textContent = `Вопрос ${currentQuestionIndex + 1} из ${shuffledQuestions.length}`;
+    resultBlock.innerHTML = "";
+    resultBlock.style.display = "";
+    answerBlock.innerHTML = "";
   }
 
-  const question = shuffledQuestions[currentQuestionIndex];
-  questionTitle.textContent = `Вопрос ${currentQuestionIndex + 1} из ${shuffledQuestions.length}`;
-  questionBlock.innerHTML = `<div class="current-question">${question.question}</div>`;
+  shuffledQuestions.forEach((q, index) => {
+    if (!quizFinished && index > currentQuestionIndex) {
+      return;
+    }
+
+    const questionItem = document.createElement("div");
+    const isAnswered = answeredQuestions[index] !== undefined;
+    const marker = isAnswered
+      ? `<span class="marker ${answeredQuestions[index].correct ? "correct" : "incorrect"}">${answeredQuestions[index].correct ? "✓" : "✗"}</span>`
+      : "";
+
+    questionItem.className = `question-item${!quizFinished && isAnswered ? " forbidden" : ""}`;
+    questionItem.innerHTML = `
+      <span class="question-number">${index + 1}.</span>
+      <span class="question-text">${q.question}</span>
+      ${marker}
+    `;
+
+    if (!quizFinished && !isAnswered && !isAnswering) {
+      questionItem.addEventListener("click", () => {
+        showAnswers(index);
+      });
+    }
+
+    if (quizFinished && isAnswered) {
+      questionItem.addEventListener("click", () => {
+        showCorrectAnswer(index);
+      });
+    }
+
+    questionBlock.appendChild(questionItem);
+  });
+}
+
+function showAnswers(index) {
+  if (isAnswering || answeredQuestions[index] !== undefined) return;
+
+  const question = shuffledQuestions[index];
   answerBlock.innerHTML = "";
-  resultBlock.innerHTML = "";
 
   const shuffledAnswers = shuffle(question.answers);
 
@@ -55,7 +94,7 @@ function showCurrentQuestion() {
 
     answerItem.addEventListener("click", () => {
       if (!isAnswering) {
-        handleAnswer(answer, answerItem);
+        handleAnswer(answer, answerItem, index);
       }
     });
 
@@ -69,45 +108,13 @@ function showResults() {
   questionBlock.innerHTML = "";
   answerBlock.innerHTML = "";
   resultBlock.innerHTML = `<div class="result-text">Правильных ответов: ${correctAnswers} из ${shuffledQuestions.length}</div>`;
-  
-  // Показываем список всех вопросов с результатами
+
   setTimeout(() => {
-    showQuestionList();
+    showAllQuestions();
   }, 2000);
 }
 
-function showQuestionList() {
-  questionTitle.textContent = quizFinished ? "Результаты теста" : "Вопросы";
-  questionBlock.innerHTML = "";
-  answerBlock.innerHTML = "";
-  
-  if (!quizFinished) {
-    resultBlock.innerHTML = "";
-  } else {
-    resultBlock.innerHTML = `<div class="result-text">Правильных ответов: ${correctAnswers} из ${shuffledQuestions.length}</div>`;
-    resultBlock.style.display = "block";
-  }
-
-  shuffledQuestions.forEach((q, index) => {
-    const questionItem = document.createElement("div");
-    questionItem.className = `question-item${!answeredQuestions[index] ? " forbidden" : ""}`;
-    questionItem.innerHTML = `
-            <span class="question-number">${index + 1}.</span>
-            <span class="question-text">${q.question}</span>
-            ${answeredQuestions[index] ? `<span class="marker ${answeredQuestions[index].correct ? "correct" : "incorrect"}">${answeredQuestions[index].correct ? "✓" : "✗"}</span>` : ""}
-        `;
-
-    questionItem.addEventListener("click", () => {
-      if (quizFinished && answeredQuestions[index]) {
-        showCorrectAnswer(index);
-      }
-    });
-
-    questionBlock.appendChild(questionItem);
-  });
-}
-
-function handleAnswer(selectedAnswer, selectedElement) {
+function handleAnswer(selectedAnswer, selectedElement, questionIndex) {
   isAnswering = true;
 
   selectedElement.classList.add("shake");
@@ -117,7 +124,7 @@ function handleAnswer(selectedAnswer, selectedElement) {
 
     if (selectedAnswer.isCorrect) {
       correctAnswers++;
-      answeredQuestions[currentQuestionIndex] = { correct: true };
+      answeredQuestions[questionIndex] = { correct: true };
 
       const answerItems = answerBlock.querySelectorAll(".answer-item");
       answerItems.forEach((item) => {
@@ -129,31 +136,47 @@ function handleAnswer(selectedAnswer, selectedElement) {
       setTimeout(() => {
         selectedElement.classList.add("correct-answer");
         selectedElement.innerHTML = `
-                    <div>${selectedAnswer.text}</div>
-                    <div class="explanation">${selectedAnswer.explanation}</div>
-                `;
+          <div>${selectedAnswer.text}</div>
+          <div class="explanation">${selectedAnswer.explanation}</div>
+        `;
 
-        const currentQuestionDiv =
-          questionBlock.querySelector(".current-question");
-        currentQuestionDiv.innerHTML +=
-          ' <span class="marker correct">✓</span>';
+        // Обновляем вопрос в списке
+        const questionItems = questionBlock.querySelectorAll(".question-item");
+        if (questionItems[questionIndex]) {
+          const marker = document.createElement("span");
+          marker.className = "marker correct";
+          marker.textContent = "✓";
+          questionItems[questionIndex].appendChild(marker);
+          questionItems[questionIndex].classList.add("forbidden");
+        }
 
         setTimeout(() => {
           selectedElement.classList.add("slide-down");
           setTimeout(() => {
             isAnswering = false;
             currentQuestionIndex++;
-            showCurrentQuestion();
+
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+              quizFinished = true;
+              showResults();
+            } else {
+              showAllQuestions();
+            }
           }, 600);
         }, 4000);
       }, 600);
     } else {
-      answeredQuestions[currentQuestionIndex] = { correct: false };
+      answeredQuestions[questionIndex] = { correct: false };
 
-      const currentQuestionDiv =
-        questionBlock.querySelector(".current-question");
-      currentQuestionDiv.innerHTML +=
-        ' <span class="marker incorrect">✗</span>';
+      // Обновляем вопрос в списке
+      const questionItems = questionBlock.querySelectorAll(".question-item");
+      if (questionItems[questionIndex]) {
+        const marker = document.createElement("span");
+        marker.className = "marker incorrect";
+        marker.textContent = "✗";
+        questionItems[questionIndex].appendChild(marker);
+        questionItems[questionIndex].classList.add("forbidden");
+      }
 
       const answerItems = answerBlock.querySelectorAll(".answer-item");
       answerItems.forEach((item) => {
@@ -163,7 +186,13 @@ function handleAnswer(selectedAnswer, selectedElement) {
       setTimeout(() => {
         isAnswering = false;
         currentQuestionIndex++;
-        showCurrentQuestion();
+
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+          quizFinished = true;
+          showResults();
+        } else {
+          showAllQuestions();
+        }
       }, 1500);
     }
   }, 500);
@@ -173,17 +202,15 @@ function showCorrectAnswer(index) {
   const question = shuffledQuestions[index];
   const correctAnswer = question.answers.find((a) => a.isCorrect);
 
-  returnButton.classList.add("show");
+  returnButton.classList.remove("show");
 
-  questionTitle.textContent = `Вопрос ${index + 1}`;
-  questionBlock.innerHTML = `<div class="current-question">${question.question}</div>`;
   answerBlock.innerHTML = `
-        <div class="answer-item correct-answer show-correct">
-            <div>${correctAnswer.text}</div>
-            <div class="explanation">${correctAnswer.explanation}</div>
-        </div>
-    `;
-  resultBlock.style.display = "none";
+    <div class="answer-item correct-answer show-correct">
+      <div class="answer-question">${question.question}</div>
+      <div>${correctAnswer.text}</div>
+      <div class="explanation">${correctAnswer.explanation}</div>
+    </div>
+  `;
 }
 
-showCurrentQuestion();
+showAllQuestions();

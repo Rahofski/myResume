@@ -56,6 +56,9 @@ h2 {
   flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
+  min-width: 400px;
+  max-width: 520px;
+  width: 100%;
 }
 
 .qaContainer {
@@ -90,9 +93,10 @@ h2 {
     box-shadow 0.3s ease;
 }
 
-.question-item:hover {
+.question-item:not(.forbidden):hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #2196f3;
 }
 
 .question-number {
@@ -108,6 +112,8 @@ h2 {
 .forbidden {
   pointer-events: none;
   opacity: 0.6;
+  cursor: default !important;
+  background: #f5f5f5 !important;
 }
 
 /* Текущий вопрос */
@@ -155,6 +161,7 @@ h2 {
 
 .answer-item:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Анимация тряски */
@@ -186,6 +193,12 @@ h2 {
 
 .answer-item.show-correct {
   transform: scale(1);
+}
+
+.answer-question {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #2e7d32;
 }
 
 .explanation {
@@ -244,6 +257,11 @@ h2 {
     flex-direction: column;
   }
 
+  .questionBlock {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .qaContainer .answerBlock {
     width: 100%;
     max-width: 100%;
@@ -263,6 +281,10 @@ h2 {
 @media (max-width: 768px) {
   body {
     padding: 10px;
+  }
+
+  .questionBlock {
+    min-width: 0;
   }
 
   .question-item,
