@@ -1,29 +1,33 @@
 // Функциональные выражения для формул
 const func1 = function (a, b, c) {
+  a = parseFloat(a);
+  b = parseFloat(b);
+  c = parseFloat(c);
   return (Math.PI * Math.sqrt(a)) / (b * b * c);
 };
 
 const func2 = function (a, b, c) {
+  a = parseFloat(a);
+  b = parseFloat(b);
+  c = parseFloat(c);
   return Math.pow(a + Math.sqrt(b), 2) / Math.pow(c, 3);
 };
 
 const func3 = function (a, b, c) {
+  a = parseFloat(a);
+  b = parseFloat(b);
+  c = parseFloat(c);
   return Math.sqrt(a + b + Math.sqrt(c)) / (Math.PI * b);
 };
 
 const formulas = [func1, func2, func3];
 
 function getInputValues(formulaNumber) {
-  const a = parseFloat(
-    prompt(`Формула ${formulaNumber}: Введите значение переменной a:`)
-  );
-  const b = parseFloat(
-    prompt(`Формула ${formulaNumber}: Введите значение переменной b:`)
-  );
-  const c = parseFloat(
-    prompt(`Формула ${formulaNumber}: Введите значение переменной c:`)
-  );
+  const a = prompt(`Формула ${formulaNumber}: Введите значение переменной a:`);
 
+  const b = prompt(`Формула ${formulaNumber}: Введите значение переменной b:`);
+
+  const c = prompt(`Формула ${formulaNumber}: Введите значение переменной c:`);
   return { a, b, c };
 }
 
