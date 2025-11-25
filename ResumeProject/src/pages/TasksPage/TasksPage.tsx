@@ -37,7 +37,7 @@ const TasksPage: React.FC = () => {
       technologies: ["HTML5", "CSS3", "JavaScript"],
       status: "Выполнено",
       completionDate: "02.11.2025",
-      demoUrl: `${demoBase}dom.html`,
+      demoUrl: `${demoBase}tasks/dom-quiz/dom.html`,
     } as Task,
     {
       id: 4,
@@ -47,7 +47,17 @@ const TasksPage: React.FC = () => {
       technologies: ["HTML5", "CSS3", "JavaScript"],
       status: "Выполнено",
       completionDate: "06.11.2025",
-      demoUrl: `${demoBase}formulas.html`,
+      demoUrl: `${demoBase}tasks/formulas/formulas.html`,
+    } as Task,
+    {
+      id: 5,
+      title: "Работа со словами",
+      description:
+        "Сортировка и интерактивное перемещение слов с drag-and-drop",
+      technologies: ["React", "TypeScript", "CSS Modules"],
+      status: "Выполнено",
+      completionDate: "15.11.2025",
+      demoUrl: "#/tasks/words-task",
     } as Task,
   ];
 

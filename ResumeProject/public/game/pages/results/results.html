@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Результаты</title>
+  <link rel="stylesheet" href="results.css">
+</head>
+<body>
+  <button 
+    class="btn-back-to-site"
+    onclick="window.location.href='/myResume/#/coursework'"
+    title="Вернуться на сайт"
+  >
+    ← Назад на сайт
+  </button>
+  <div class="results-container">
+    <!-- Заголовок -->
+    <header class="results-header">
+      <h1>Результаты игры</h1>
+    </header>
+
+    <!-- Результаты текущего игрока -->
+    <section class="player-results">
+      <h2>Ваш результат</h2>
+      <div class="result-card">
+        <div class="result-item">
+          <span class="result-label">Игрок:</span>
+          <span class="result-value" id="playerName">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Очки:</span>
+          <span class="result-value highlight" id="finalScore">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Уровень:</span>
+          <span class="result-value" id="finalLevel">1</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Время игры:</span>
+          <span class="result-value" id="gameTime">00:00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Таблица рейтинга -->
+    <section class="leaderboard">
+      <h2>🏆 Рейтинг игроков</h2>
+      
+      <!-- Фильтры -->
+      <div class="leaderboard-controls">
+        <button class="filter-btn active" data-filter="all">Все</button>
+        <button class="filter-btn" data-filter="player">Мои результаты</button>
+      </div>
+
+      <!-- Таблица -->
+      <div class="table-container">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Место</th>
+              <th>Игрок</th>
+              <th>Очки</th>
+              <th>Уровень</th>
+              <th>Время</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <tr>
+              <td colspan="6" class="no-data">Нет данных</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Статистика -->
+      <div class="stats-summary">
+        <div class="stat-item">
+          <span class="stat-label">Всего игр:</span>
+          <span class="stat-value" id="totalGames">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Лучший результат:</span>
+          <span class="stat-value" id="bestScore">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ваша позиция:</span>
+          <span class="stat-value" id="playerRank">-</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Кнопки действий -->
+    <footer class="actions">
+      <button class="btn-action btn-return" id="returnToGameBtn" style="display: none;">⬅️ Вернуться к игре</button>
+      <button class="btn-action btn-primary" id="playAgainBtn">🔄 Играть снова</button>
+      <button class="btn-action btn-secondary" id="newPlayerBtn">👤 Новый игрок</button>
+      <button class="btn-action" id="exportBtn">📥 Экспорт данных</button>
+      <button class="btn-action btn-danger" id="clearDataBtn">🗑️ Очистить рейтинг</button>
+    </footer>
+  </div>
+
+  <script src="results.js" type="module"></script>
+  <script>
+    // Скрыть кнопку "Назад на сайт" если страница в iframe
+    if (window.self !== window.top) {
+      const backButton = document.querySelector('.btn-back-to-site');
+      if (backButton) {
+        backButton.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

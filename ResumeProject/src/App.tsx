@@ -13,6 +13,8 @@ import TasksPage from "./pages/TasksPage/TasksPage";
 import { Picture } from "./pages/TasksPage/tasks/Picture/Picture";
 import { TasksProvider } from "./contexts/TasksContext";
 import { FlexBox } from "./pages/TasksPage/tasks/flex-box/flex-box";
+import Words from "./pages/TasksPage/tasks/Words/Words";
+import GamePage from "./pages/GamePage/GamePage";
 import { Footer } from "./components/Footer/Footer";
 import { Logo } from "./components/Logo/Logo";
 
@@ -43,6 +45,8 @@ function App() {
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/tasks/picture-task" element={<Picture />} />
               <Route path="/tasks/flexbox-task" element={<FlexBox />} />
+              <Route path="/tasks/words-task" element={<Words />} />
+              <Route path="/coursework" element={<GamePage />} />
             </Routes>
           </div>
           <Footer />

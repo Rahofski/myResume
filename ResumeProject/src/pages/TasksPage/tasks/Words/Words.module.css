@@ -1,0 +1,92 @@
+.wordsContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.block3 {
+  width: 100%;
+  height: 100px;
+  background-color: lightblue;
+  position: relative;
+}
+
+.block12 {
+  display: flex;
+  width: 100%;
+  min-height: 400px;
+  flex: 1;
+}
+
+.block2 {
+  flex: 0 0 33.333%;
+  background-color: lightcoral;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 5px;
+}
+
+.block1 {
+  flex: 1;
+  background-color: lightgreen;
+  padding: 40px;
+}
+
+.inputArea {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.textInput {
+  flex: 1;
+  height: 40px;
+  font-size: 16px;
+  padding: 8px;
+  box-sizing: border-box;
+  border: none;
+  background-color: thistle;
+}
+
+.parseButton {
+  flex: 0 0 33.333%;
+  height: 40px;
+  font-size: 16px;
+  margin-left: 5px;
+  background-color: thistle;
+  border: none;
+  cursor: pointer;
+}
+
+.parseButton:hover {
+  opacity: 0.8;
+}
+
+.outputArea {
+  border: 1px solid black;
+  padding: 10px;
+  margin-top: 10px;
+  min-height: 50px;
+  background-color: white;
+  font-size: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wordItem {
+  margin: 5px 0;
+  width: 100px;
+  height: 40px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+  user-select: none;
+}

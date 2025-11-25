@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Игра - Главная</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <button 
+      class="btn-back-to-site"
+      onclick="window.location.href='/myResume/#/coursework'"
+      title="Вернуться на сайт"
+    >
+      ← Назад на сайт
+    </button>
+    <div class="welcome-container">
+      <h1>Добро пожаловать!</h1>
+      <p>Игровое приложение "Разрежь фигуру"</p>
+      <button
+        class="btn-start"
+        onclick="window.location.href='pages/auth/auth.html'"
+      >
+        Начать игру
+      </button>
+    </div>
+    <div class="container">
+      <div class="bird-container bird-container--one">
+        <div class="bird bird--one"></div>
+      </div>
+
+      <div class="bird-container bird-container--two">
+        <div class="bird bird--two"></div>
+      </div>
+
+      <div class="bird-container bird-container--three">
+        <div class="bird bird--three"></div>
+      </div>
+
+      <div class="bird-container bird-container--four">
+        <div class="bird bird--four"></div>
+      </div>
+    </div>
+    <script>
+      // Скрыть кнопку "Назад на сайт" если страница в iframe
+      if (window.self !== window.top) {
+        const backButton = document.querySelector('.btn-back-to-site');
+        if (backButton) {
+          backButton.style.display = 'none';
+        }
+      }
+    </script>
+  </body>
+</html>
