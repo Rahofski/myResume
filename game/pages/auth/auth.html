@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="auth.css" />
+  </head>
+  <body>
+    <button 
+      class="btn-back-to-site"
+      onclick="window.location.href='/myResume/#/coursework'"
+      title="Вернуться на сайт"
+    >
+      ← Назад на сайт
+    </button>
+    <div class="ring">
+      <i style="--clr: #00ff0a"></i>
+      <i style="--clr: #ff0057"></i>
+      <i style="--clr: #fffd44"></i>
+      <div class="login">
+        <h2>Миниавторизация</h2>
+        <div class="inputBx">
+          <input type="text" placeholder="" id="nickInput"/>
+        </div>
+        <div class="inputBx" id="submit-btn">
+          <input type="submit" value="Войти" />
+        </div>
+        <div class="btn" id="generate-nick-btn">
+          <button>Сгенерировать никнейм</button>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <script src="auth.js" type="module"></script>
+    <script>
+      // Скрыть кнопку "Назад на сайт" если страница в iframe
+      if (window.self !== window.top) {
+        const backButton = document.querySelector('.btn-back-to-site');
+        if (backButton) {
+          backButton.style.display = 'none';
+        }
+      }
+    </script>
+  </body>
+</html>

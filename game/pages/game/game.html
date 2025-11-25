@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Игра</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <button 
+    class="btn-back-to-site"
+    onclick="window.location.href='/myResume/#/coursework'"
+    title="Вернуться на сайт"
+  >
+    ← Назад на сайт
+  </button>
+  <div class="game-container">
+    <!-- Заголовок игры -->
+    <header class="game-header">
+      <div class="player-info">
+        <span class="player-name">Игрок: <strong id="playerName">-</strong></span>
+      </div>
+      <div class="level-info">
+        <span>Уровень: <strong id="currentLevel">1</strong>/6</span>
+      </div>
+      <div class="score-info">
+        <span>Очки: <strong id="score">0</strong></span>
+      </div>
+      <div class="timer">
+        <span>Время: <strong id="timer">00:00</strong></span>
+      </div>
+    </header>
+
+    <main class="game-area" id="gameArea">
+      <div class="level-intro" id="levelIntro">
+        <h2>Готовы начать?</h2>
+        <p class="level-instruction" id="levelInstruction">Разрежь фигуру на части</p>
+        <p>Уровень <span id="introLevel">1</span></p>
+        <button class="btn-start" id="startLevelBtn">Начать уровень</button>
+      </div>
+      
+      <!-- Canvas для игры "Разрежь фигуру" -->
+      <div class="game-content" id="gameContent" style="display: none;">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="game-hint">
+          💡 Проведи линию через фигуру, чтобы разрезать её
+        </div>
+      </div>
+    </main>
+
+    <footer class="game-controls">
+      <button class="btn-control" id="pauseBtn">Пауза</button>
+      <button class="btn-control" id="skipLevelBtn">Завершить уровень</button>
+      <button class="btn-control" id="viewResultsFromGameBtn">Рейтинг</button>
+      <button class="btn-control btn-danger" id="exitBtn">Выход</button>
+    </footer>
+  </div>
+
+  <div class="modal" id="pauseModal" style="display: none;">
+    <div class="modal-content">
+      <h2>Пауза</h2>
+      <p>Игра приостановлена</p>
+      <button class="btn-modal" id="resumeBtn">Продолжить</button>
+      <button class="btn-modal btn-secondary" id="exitFromPauseBtn">Выйти из игры</button>
+    </div>
+  </div>
+
+  <div class="modal" id="levelCompleteModal" style="display: none;">
+    <div class="modal-content">
+      <h2>Уровень пройден! 🎉</h2>
+      <p>Ваши очки: <strong id="levelScore">0</strong></p>
+      <p>Разрезов сделано: <strong id="levelCorrect">0</strong></p>
+      <p>Получилось кусков: <strong id="levelWrong">0</strong></p>
+      <button class="btn-modal" id="nextLevelBtn">Следующий уровень</button>
+    </div>
+  </div>
+
+  <!-- Модальное окно для пропущенного уровня -->
+  <div class="modal" id="levelSkippedModal" style="display: none;">
+    <div class="modal-content">
+      <h2>Уровень не пройден ⚠️</h2>
+      <p>Слишком много кусков!</p>
+      <p><strong>Очки за этот уровень не начислены</strong></p>
+      <p>Нужно разрезать ровно на заданное количество кусков</p>
+      <button class="btn-modal" id="retryLevelBtn">Перепройти уровень</button>
+      <button class="btn-modal btn-secondary" id="exitFromSkipBtn">Выйти из игры</button>
+    </div>
+  </div>
+
+  <div class="modal" id="gameOverModal" style="display: none;">
+    <div class="modal-content">
+      <h2 id="gameOverTitle">Время вышло! ⏰</h2>
+      <p id="gameOverMessage">Игра окончена</p>
+      <button class="btn-modal" id="viewResultsBtn">Посмотреть результаты</button>
+    </div>
+  </div>
+
+  <script src="game.js" type="module"></script>
+  <script>
+    // Скрыть кнопку "Назад на сайт" если страница в iframe
+    if (window.self !== window.top) {
+      const backButton = document.querySelector('.btn-back-to-site');
+      if (backButton) {
+        backButton.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
