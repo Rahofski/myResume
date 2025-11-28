@@ -238,7 +238,7 @@ export class SliceGame {
       this.drawCut(this.currentCut, this.currentCutColor, 4);
     }
     
-    // Рисуем инструкцию
+    // Рисуем инструкцию    
     this.drawInstruction();
   }
   

@@ -14,6 +14,41 @@
   >
     ← Назад на сайт
   </button>
+
+  <div class="top-right-panel">
+    <button class="icon-button" id="helpButton" title="Информация о бонусах">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+    </button>
+    <button class="icon-button rating-button" id="ratingButton" title="Ваш рейтинг">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="modal-overlay" id="helpModal" style="display: none;">
+    <div class="modal-help">
+      <button class="modal-close" id="closeHelp">&times;</button>
+      <h2>Как получить больше очков?</h2>
+      <div class="help-content">
+        <p><strong>Быстрое прохождение = больше очков!</strong></p>
+        <ul>
+          <li>Чем быстрее вы проходите уровень, тем больше бонусных очков получаете</li>
+          <li>За каждую правильно разрезанную фигуру начисляются базовые очки</li>
+          <li>Бонус за скорость умножает ваш результат</li>
+          <li>Старайтесь действовать быстро, но точно!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="game-container">
     <!-- Заголовок игры -->
     <header class="game-header">
@@ -22,9 +57,6 @@
       </div>
       <div class="level-info">
         <span>Уровень: <strong id="currentLevel">1</strong>/6</span>
-      </div>
-      <div class="score-info">
-        <span>Очки: <strong id="score">0</strong></span>
       </div>
       <div class="timer">
         <span>Время: <strong id="timer">00:00</strong></span>
@@ -51,7 +83,6 @@
     <footer class="game-controls">
       <button class="btn-control" id="pauseBtn">Пауза</button>
       <button class="btn-control" id="skipLevelBtn">Завершить уровень</button>
-      <button class="btn-control" id="viewResultsFromGameBtn">Рейтинг</button>
       <button class="btn-control btn-danger" id="exitBtn">Выход</button>
     </footer>
   </div>
@@ -104,6 +135,59 @@
         backButton.style.display = 'none';
       }
     }
+
+    // Обработчики для модальных окон
+    const helpButton = document.getElementById('helpButton');
+    const ratingButton = document.getElementById('ratingButton');
+    const helpModal = document.getElementById('helpModal');
+    const closeHelp = document.getElementById('closeHelp');
+
+    // Открыть модальное окно помощи
+    helpButton.addEventListener('click', () => {
+      helpModal.style.display = 'flex';
+    });
+
+    // Закрыть модальное окно помощи
+    closeHelp.addEventListener('click', () => {
+      helpModal.style.display = 'none';
+    });
+
+    // Закрыть по клику вне модального окна
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        helpModal.style.display = 'none';
+      }
+    });
+
+    // Обновление рейтинга в иконке
+    function updateRatingDisplay() {
+      const scoreElement = document.getElementById('score');
+      const ratingValue = document.getElementById('ratingValue');
+      
+      if (scoreElement && ratingValue) {
+        ratingValue.textContent = scoreElement.textContent;
+      }
+    }
+
+    // Обновляем рейтинг при изменении счета
+    const scoreObserver = new MutationObserver(updateRatingDisplay);
+    const scoreElement = document.getElementById('score');
+    
+    if (scoreElement) {
+      scoreObserver.observe(scoreElement, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+      
+      // Начальное значение
+      updateRatingDisplay();
+    }
+
+    // Клик на кнопку рейтинга - переход к результатам
+    ratingButton.addEventListener('click', () => {
+      window.location.href = '../results/results.html';
+    });
   </script>
 </body>
 </html>

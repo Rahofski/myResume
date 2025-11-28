@@ -10,15 +10,17 @@
 body {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
   background: #111;
   padding: 20px;
+  padding-top: 100px;
   overflow-x: hidden;
+  position: relative;
 }
 
 .btn-back-to-site {
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
   padding: 12px 24px;
@@ -42,6 +44,168 @@ body {
 
 .btn-back-to-site:active {
   transform: translateX(-3px);
+}
+
+/* Фиксированная панель в правом верхнем углу */
+.top-right-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.icon-button {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+  color: white;
+  position: relative;
+}
+
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.icon-button:active {
+  transform: scale(0.95);
+}
+
+.rating-button {
+  flex-direction: column;
+  gap: 2px;
+  background: linear-gradient(135deg, rgba(100, 150, 255, 0.2), rgba(50, 100, 200, 0.2));
+  border-color: rgba(100, 150, 255, 0.5);
+}
+
+.rating-button:hover {
+  background: linear-gradient(135deg, rgba(100, 150, 255, 0.3), rgba(50, 100, 200, 0.3));
+  border-color: rgba(100, 150, 255, 0.7);
+}
+
+.rating-button svg {
+  stroke: rgba(100, 200, 255, 1);
+}
+
+.rating-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(100, 200, 255, 1);
+}
+
+/* Модальные окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-help {
+  background: rgba(30, 30, 30, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: rgba(255, 50, 50, 0.3);
+  border-color: rgba(255, 50, 50, 0.5);
+  transform: rotate(90deg);
+}
+
+.modal-help h2 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.help-content {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.help-content p {
+  margin-bottom: 15px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.help-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.help-content li {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid rgba(0, 255, 150, 0.5);
+  border-radius: 5px;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 /* Контейнер игры */
@@ -222,7 +386,6 @@ body {
   transform: translateY(0);
 }
 
-/* Игровой контент */
 .game-content {
   min-height: 400px;
   display: flex;

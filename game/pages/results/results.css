@@ -10,14 +10,17 @@
 body {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
   background: #111;
   padding: 20px;
+  padding-top: 100px;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .btn-back-to-site {
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
   padding: 12px 24px;

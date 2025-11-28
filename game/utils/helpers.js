@@ -11,7 +11,7 @@ export function formatTime(seconds) {
 export function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString('ru-RU', {
-    day: '2-digit',
+    day: '2-digit', 
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
@@ -217,6 +217,16 @@ export function generateNickname() {
     "Грозный",
     "Зелёный",
     "Грязный",
+    "Солёный",
+    "Острый",
+    "Тихий",
+    "Шумный",
+    "Бомбический",
+    "Вихревой",
+    "Прыгающий",
+    "Летающий",
+    "Пламенный",
+    "Волосатый"
   ];
   const animals = [
     "Лев",
@@ -231,7 +241,14 @@ export function generateNickname() {
     'Лягушонок',
     'Керасин',
     'Пират',
-    'Варвар'
+    'Варвар',
+    'Гладиатор',
+    'Баловник',
+    'Шут',
+    'Котик',
+    'Пёсик',
+    'Ежик',
+    'Зайчик'
   ];
 
   const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];

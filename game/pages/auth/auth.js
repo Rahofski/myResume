@@ -18,10 +18,8 @@ submitBtn.addEventListener("click", (e) => {
     return;
   }
 
-  // Сохраняем имя игрока в localStorage
   if (saveCurrentPlayer(nickname)) {
     console.log("Игрок сохранен:", nickname);
-    // Переходим на игровую страницу
     window.location.href = "../game/game.html";
   } else {
     alert("Ошибка сохранения данных. Попробуйте еще раз.");

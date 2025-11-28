@@ -388,18 +388,20 @@ viewResultsBtn.addEventListener("click", () => {
 });
 
 // Переход на страницу результатов во время игры
-viewResultsFromGameBtn.addEventListener("click", () => {
-  // Сохраняем состояние игры для возможности вернуться
-  const gameStateData = {
-    currentLevel: gameState.currentLevel,
-    score: gameState.getStats().score,
-    correctAnswers: gameState.getStats().correctAnswers,
-    wrongAnswers: gameState.getStats().wrongAnswers,
-    returnToGame: true
-  };
-  localStorage.setItem('tempGameState', JSON.stringify(gameStateData));
-  window.location.href = "../results/results.html";
-});
+if (viewResultsFromGameBtn) {
+  viewResultsFromGameBtn.addEventListener("click", () => {
+    // Сохраняем состояние игры для возможности вернуться
+    const gameStateData = {
+      currentLevel: gameState.currentLevel,
+      score: gameState.getStats().score,
+      correctAnswers: gameState.getStats().correctAnswers,
+      wrongAnswers: gameState.getStats().wrongAnswers,
+      returnToGame: true,
+    };
+    localStorage.setItem("tempGameState", JSON.stringify(gameStateData));
+    window.location.href = "../results/results.html";
+  });
+}
 
 // Обработка клавиш клавиатуры
 document.addEventListener("keydown", (e) => {
