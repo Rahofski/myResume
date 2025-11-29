@@ -82,6 +82,20 @@ body {
   transform: scale(0.95);
 }
 
+.user-button {
+  background: linear-gradient(135deg, rgba(150, 100, 255, 0.2), rgba(100, 50, 200, 0.2));
+  border-color: rgba(150, 100, 255, 0.5);
+}
+
+.user-button:hover {
+  background: linear-gradient(135deg, rgba(150, 100, 255, 0.3), rgba(100, 50, 200, 0.3));
+  border-color: rgba(150, 100, 255, 0.7);
+}
+
+.user-button svg {
+  stroke: rgba(180, 140, 255, 1);
+}
+
 .rating-button {
   flex-direction: column;
   gap: 2px;
@@ -206,6 +220,40 @@ body {
   border-radius: 5px;
   font-size: 15px;
   line-height: 1.5;
+}
+
+/* Профиль пользователя в модальном окне */
+.user-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid rgba(150, 100, 255, 0.5);
+}
+
+.profile-label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.profile-value.highlight {
+  color: rgba(100, 200, 255, 1);
+  font-size: 20px;
+  font-weight: 700;
 }
 
 /* Контейнер игры */

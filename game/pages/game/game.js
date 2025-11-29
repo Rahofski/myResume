@@ -71,7 +71,11 @@ function updateUI() {
   const stats = gameState.getStats();
 
   currentLevelElement.textContent = stats.level;
-  scoreElement.textContent = stats.score;
+
+  // Обновляем счет через глобальную функцию
+  if (window.updateScoreDisplay) {
+    window.updateScoreDisplay(stats.score);
+  }
 
   // Обновляем таймер
   updateTimerDisplay();
@@ -100,7 +104,7 @@ function showLevelIntro(level) {
   gameContentElement.style.display = "none";
 
   document.getElementById("introLevel").textContent = level;
-  
+
   // Показываем инструкцию для текущего уровня
   const levelConfig = getLevelConfig(level);
   levelInstructionElement.textContent = levelConfig.instruction;
@@ -123,14 +127,14 @@ function startLevel() {
 // Загрузка контента уровня
 function loadLevelContent(level) {
   const levelConfig = getLevelConfig(level);
-  
+
   // Инициализируем Canvas игру с параметрами уровня
   sliceGame.initLevel(
     levelConfig.sides,
     levelConfig.targetCuts,
     levelConfig.targetPieces
   );
-  
+
   // Запускаем проверку прогресса
   checkGameProgress();
 }
@@ -140,14 +144,14 @@ function checkGameProgress() {
   const progressCheckInterval = setInterval(() => {
     if (!gameState.isPaused && gameState.isGameActive) {
       const progress = sliceGame.getProgress();
-      
+
       // Проверяем провал уровня (слишком много кусков)
       if (progress.isFailed) {
         clearInterval(progressCheckInterval);
         handleLevelFailed();
         return;
       }
-      
+
       // Проверяем завершение уровня
       if (progress.isComplete) {
         clearInterval(progressCheckInterval);
@@ -155,7 +159,7 @@ function checkGameProgress() {
       }
     }
   }, 100);
-  
+
   // Сохраняем интервал для очистки
   gameState.progressCheckInterval = progressCheckInterval;
 }
@@ -269,7 +273,7 @@ function completeLevel(isSkipped = false) {
   gameState.addTimeBonus();
 
   const stats = gameState.getStats();
-  
+
   // Сохраняем прогресс после каждого успешно пройденного уровня
   const totalPlayTime = Date.now() - gameState.startTime;
   const currentResult = {
@@ -280,7 +284,7 @@ function completeLevel(isSkipped = false) {
     correctAnswers: stats.correctAnswers,
     wrongAnswers: stats.wrongAnswers,
     date: new Date().toISOString(),
-    isComplete: false
+    isComplete: false,
   };
   saveGameResult(currentResult);
 
@@ -296,7 +300,7 @@ function completeLevel(isSkipped = false) {
 // Показать модальное окно завершения уровня
 function showLevelCompleteModal(stats) {
   const progress = sliceGame.getProgress();
-  
+
   document.getElementById("levelScore").textContent = stats.score;
   document.getElementById("levelCorrect").textContent = progress.currentCuts;
   document.getElementById("levelWrong").textContent = progress.currentPieces;
@@ -340,7 +344,11 @@ resumeBtn.addEventListener("click", () => {
 });
 
 skipLevelBtn.addEventListener("click", () => {
-  if (confirm("Вы уверены, что хотите завершить уровень досрочно?\n\nВНИМАНИЕ: Очки за этот уровень НЕ будут начислены!")) {
+  if (
+    confirm(
+      "Вы уверены, что хотите завершить уровень досрочно?\n\nВНИМАНИЕ: Очки за этот уровень НЕ будут начислены!"
+    )
+  ) {
     completeLevel(true);
   }
 });
@@ -368,7 +376,7 @@ nextLevelBtn.addEventListener("click", () => {
 
 retryLevelBtn.addEventListener("click", () => {
   levelSkippedModal.style.display = "none";
-  
+
   // Сбрасываем статистику уровня (очки остаются)
   gameState.resetLevelStats();
   // Перезапускаем текущий уровень

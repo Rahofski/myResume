@@ -23,6 +23,12 @@
         <path d="M12 17h.01"></path>
       </svg>
     </button>
+    <button class="icon-button user-button" id="userButton" title="Профиль">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </button>
     <button class="icon-button rating-button" id="ratingButton" title="Ваш рейтинг">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -45,6 +51,27 @@
           <li>Бонус за скорость умножает ваш результат</li>
           <li>Старайтесь действовать быстро, но точно!</li>
         </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="userModal" style="display: none;">
+    <div class="modal-help">
+      <button class="modal-close" id="closeUser">&times;</button>
+      <h2>Профиль игрока</h2>
+      <div class="help-content user-profile">
+        <div class="profile-item">
+          <span class="profile-label">Игрок:</span>
+          <span class="profile-value" id="modalPlayerName">-</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Текущие очки:</span>
+          <span class="profile-value highlight" id="modalScore">0</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Уровень:</span>
+          <span class="profile-value" id="modalLevel">1</span>
+        </div>
       </div>
     </div>
   </div>
@@ -136,11 +163,17 @@
       }
     }
 
+    // Глобальная переменная для хранения текущего счета
+    window.currentGameScore = 0;
+
     // Обработчики для модальных окон
     const helpButton = document.getElementById('helpButton');
+    const userButton = document.getElementById('userButton');
     const ratingButton = document.getElementById('ratingButton');
     const helpModal = document.getElementById('helpModal');
+    const userModal = document.getElementById('userModal');
     const closeHelp = document.getElementById('closeHelp');
+    const closeUser = document.getElementById('closeUser');
 
     // Открыть модальное окно помощи
     helpButton.addEventListener('click', () => {
@@ -159,30 +192,52 @@
       }
     });
 
-    // Обновление рейтинга в иконке
-    function updateRatingDisplay() {
-      const scoreElement = document.getElementById('score');
-      const ratingValue = document.getElementById('ratingValue');
+    // Открыть модальное окно профиля
+    userButton.addEventListener('click', () => {
+      updateUserProfile();
+      userModal.style.display = 'flex';
+    });
+
+    // Закрыть модальное окно профиля
+    closeUser.addEventListener('click', () => {
+      userModal.style.display = 'none';
+    });
+
+    // Закрыть по клику вне модального окна
+    userModal.addEventListener('click', (e) => {
+      if (e.target === userModal) {
+        userModal.style.display = 'none';
+      }
+    });
+
+    // Обновление данных профиля в модальном окне
+    function updateUserProfile() {
+      const playerNameElement = document.getElementById('playerName');
+      const currentLevelElement = document.getElementById('currentLevel');
       
-      if (scoreElement && ratingValue) {
-        ratingValue.textContent = scoreElement.textContent;
+      const modalPlayerName = document.getElementById('modalPlayerName');
+      const modalLevel = document.getElementById('modalLevel');
+      const modalScore = document.getElementById('modalScore');
+      
+      if (playerNameElement && modalPlayerName) {
+        modalPlayerName.textContent = playerNameElement.textContent;
+      }
+      if (currentLevelElement && modalLevel) {
+        modalLevel.textContent = currentLevelElement.textContent;
+      }
+      if (modalScore) {
+        modalScore.textContent = window.currentGameScore || 0;
       }
     }
 
-    // Обновляем рейтинг при изменении счета
-    const scoreObserver = new MutationObserver(updateRatingDisplay);
-    const scoreElement = document.getElementById('score');
-    
-    if (scoreElement) {
-      scoreObserver.observe(scoreElement, {
-        childList: true,
-        characterData: true,
-        subtree: true
-      });
-      
-      // Начальное значение
-      updateRatingDisplay();
-    }
+    // Глобальная функция для обновления счета (вызывается из game.js)
+    window.updateScoreDisplay = function(score) {
+      window.currentGameScore = score;
+      const ratingValue = document.getElementById('ratingValue');
+      if (ratingValue) {
+        ratingValue.textContent = score;
+      }
+    };
 
     // Клик на кнопку рейтинга - переход к результатам
     ratingButton.addEventListener('click', () => {
