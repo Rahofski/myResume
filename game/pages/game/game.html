@@ -42,14 +42,15 @@
   <div class="modal-overlay" id="helpModal" style="display: none;">
     <div class="modal-help">
       <button class="modal-close" id="closeHelp">&times;</button>
-      <h2>Как получить больше очков?</h2>
+      <h2>Правила игры</h2>
       <div class="help-content">
-        <p><strong>Быстрое прохождение = больше очков!</strong></p>
+        <p><strong>Быстрое и точное прохождение = больше очков!</strong></p>
         <ul>
-          <li>Чем быстрее вы проходите уровень, тем больше бонусных очков получаете</li>
-          <li>За каждую правильно разрезанную фигуру начисляются базовые очки</li>
-          <li>Бонус за скорость умножает ваш результат</li>
-          <li>Старайтесь действовать быстро, но точно!</li>
+          <li><strong>Строгие правила:</strong> Нужно сделать <strong>ровно</strong> столько разрезов, сколько указано в уровне</li>
+          <li>Разрезы должны дать <strong>ровно</strong> заданное количество кусков</li>
+          <li>Если кусков или разрезов больше - уровень провален</li>
+          <li>Чем быстрее пройдете уровень, тем больше бонусных очков получите</li>
+          <li>Планируйте разрезы заранее - их можно сделать ограниченное количество!</li>
         </ul>
       </div>
     </div>
@@ -77,7 +78,6 @@
   </div>
 
   <div class="game-container">
-    <!-- Заголовок игры -->
     <header class="game-header">
       <div class="player-info">
         <span class="player-name">Игрок: <strong id="playerName">-</strong></span>
@@ -98,11 +98,10 @@
         <button class="btn-start" id="startLevelBtn">Начать уровень</button>
       </div>
       
-      <!-- Canvas для игры "Разрежь фигуру" -->
       <div class="game-content" id="gameContent" style="display: none;">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
         <div class="game-hint">
-          💡 Проведи линию через фигуру, чтобы разрезать её
+          💡 Сделай ровно заданное количество разрезов, чтобы получить нужное количество кусков
         </div>
       </div>
     </main>
@@ -125,7 +124,7 @@
 
   <div class="modal" id="levelCompleteModal" style="display: none;">
     <div class="modal-content">
-      <h2>Уровень пройден! 🎉</h2>
+      <h2>Уровень пройден!</h2>
       <p>Ваши очки: <strong id="levelScore">0</strong></p>
       <p>Разрезов сделано: <strong id="levelCorrect">0</strong></p>
       <p>Получилось кусков: <strong id="levelWrong">0</strong></p>
@@ -133,13 +132,12 @@
     </div>
   </div>
 
-  <!-- Модальное окно для пропущенного уровня -->
   <div class="modal" id="levelSkippedModal" style="display: none;">
     <div class="modal-content">
-      <h2>Уровень не пройден ⚠️</h2>
-      <p>Слишком много кусков!</p>
+      <h2>Уровень не пройден</h2>
+      <p id="failureReason">Условия уровня не выполнены!</p>
       <p><strong>Очки за этот уровень не начислены</strong></p>
-      <p>Нужно разрезать ровно на заданное количество кусков</p>
+      <p>Нужно сделать <strong>ровно</strong> заданное количество разрезов и получить <strong>ровно</strong> заданное количество кусков</p>
       <button class="btn-modal" id="retryLevelBtn">Перепройти уровень</button>
       <button class="btn-modal btn-secondary" id="exitFromSkipBtn">Выйти из игры</button>
     </div>
@@ -147,7 +145,7 @@
 
   <div class="modal" id="gameOverModal" style="display: none;">
     <div class="modal-content">
-      <h2 id="gameOverTitle">Время вышло! ⏰</h2>
+      <h2 id="gameOverTitle">Время вышло! </h2>
       <p id="gameOverMessage">Игра окончена</p>
       <button class="btn-modal" id="viewResultsBtn">Посмотреть результаты</button>
     </div>
@@ -155,7 +153,6 @@
 
   <script src="game.js" type="module"></script>
   <script>
-    // Скрыть кнопку "Назад на сайт" если страница в iframe
     if (window.self !== window.top) {
       const backButton = document.querySelector('.btn-back-to-site');
       if (backButton) {
@@ -163,7 +160,6 @@
       }
     }
 
-    // Глобальная переменная для хранения текущего счета
     window.currentGameScore = 0;
 
     // Обработчики для модальных окон
@@ -175,7 +171,6 @@
     const closeHelp = document.getElementById('closeHelp');
     const closeUser = document.getElementById('closeUser');
 
-    // Открыть модальное окно помощи
     helpButton.addEventListener('click', () => {
       helpModal.style.display = 'flex';
     });
@@ -239,7 +234,6 @@
       }
     };
 
-    // Клик на кнопку рейтинга - переход к результатам
     ratingButton.addEventListener('click', () => {
       window.location.href = '../results/results.html';
     });

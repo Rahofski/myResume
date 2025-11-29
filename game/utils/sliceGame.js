@@ -12,7 +12,6 @@ export class SliceGame {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     
-    // Игровые параметры
     this.polygon = null;
     this.cuts = [];
     this.currentCut = null;
@@ -135,12 +134,17 @@ export class SliceGame {
     
     this.isDrawing = false;
     
-    // Проверяем валидность разреза
+    // Проверяем, не превышен ли лимит разрезов
+    if (this.cuts.length >= this.targetCuts) {
+      this.currentCut = null;
+      this.redraw();
+      return;
+    }
+    
     if (this.isValidCut()) {
       this.cuts.push([...this.currentCut]);
       this.applyCut();
       
-      // Воспроизводим звук успешного разреза
       this.sliceSound.currentTime = 0;
       this.sliceSound.play().catch(err => console.log('Audio play failed:', err));
     }
@@ -211,8 +215,8 @@ export class SliceGame {
       targetCuts: this.targetCuts,
       currentPieces: this.pieces.length,
       targetPieces: this.targetPieces,
-      isComplete: this.pieces.length === this.targetPieces,
-      isFailed: this.pieces.length > this.targetPieces
+      isComplete: this.cuts.length === this.targetCuts && this.pieces.length === this.targetPieces,
+      isFailed: this.pieces.length > this.targetPieces || this.cuts.length > this.targetCuts
     };
   }
   
@@ -303,11 +307,26 @@ export class SliceGame {
     const progress = this.getProgress();
     
     ctx.font = 'bold 16px Arial';
-    ctx.fillStyle = '#fff';
     ctx.textAlign = 'left';
     
+    // Изменяем цвет в зависимости от состояния
+    if (progress.isFailed) {
+      ctx.fillStyle = "#ff4444";
+    } else if (progress.isComplete) {
+      ctx.fillStyle = "#44ff44";
+    } else {
+      ctx.fillStyle = "#fff";
+    }
+
     const text = `Разрезов: ${progress.currentCuts}/${progress.targetCuts} | Кусков: ${progress.currentPieces}/${progress.targetPieces}`;
     ctx.fillText(text, 20, 30);
+
+    // Показываем подсказку о лимите
+    if (progress.currentCuts >= progress.targetCuts && !progress.isComplete) {
+      ctx.font = "bold 14px Arial";
+      ctx.fillStyle = "#ffaa00";
+      ctx.fillText("Достигнут лимит разрезов!", 20, 55);
+    }
   }
   
   /**

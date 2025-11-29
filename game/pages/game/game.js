@@ -4,7 +4,6 @@ import { getCurrentPlayer, saveGameResult } from "../../utils/storage.js";
 import { SliceGame } from "../../utils/sliceGame.js";
 import { getLevelConfig, getMaxLevel } from "../../data.js";
 
-// DOM элементы
 const playerNameElement = document.getElementById("playerName");
 const currentLevelElement = document.getElementById("currentLevel");
 const scoreElement = document.getElementById("score");
@@ -19,7 +18,9 @@ const gameAreaElement = document.getElementById("gameArea");
 const startLevelBtn = document.getElementById("startLevelBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const skipLevelBtn = document.getElementById("skipLevelBtn");
-const viewResultsFromGameBtn = document.getElementById("viewResultsFromGameBtn");
+const viewResultsFromGameBtn = document.getElementById(
+  "viewResultsFromGameBtn"
+);
 const exitBtn = document.getElementById("exitBtn");
 
 // Модальные окна
@@ -46,7 +47,6 @@ let timerInterval = null;
 let isPending = false;
 let sliceGame = null;
 
-// Инициализация игры
 function initGame() {
   const playerName = getCurrentPlayer();
 
@@ -58,8 +58,7 @@ function initGame() {
 
   playerNameElement.textContent = playerName;
   gameState.initGame(playerName);
-  
-  // Инициализируем Canvas игру
+
   sliceGame = new SliceGame(gameCanvas);
 
   updateUI();
@@ -128,18 +127,15 @@ function startLevel() {
 function loadLevelContent(level) {
   const levelConfig = getLevelConfig(level);
 
-  // Инициализируем Canvas игру с параметрами уровня
   sliceGame.initLevel(
     levelConfig.sides,
     levelConfig.targetCuts,
     levelConfig.targetPieces
   );
 
-  // Запускаем проверку прогресса
   checkGameProgress();
 }
 
-// Проверка прогресса игры
 function checkGameProgress() {
   const progressCheckInterval = setInterval(() => {
     if (!gameState.isPaused && gameState.isGameActive) {
@@ -152,7 +148,6 @@ function checkGameProgress() {
         return;
       }
 
-      // Проверяем завершение уровня
       if (progress.isComplete) {
         clearInterval(progressCheckInterval);
         handleLevelComplete();
@@ -164,9 +159,20 @@ function checkGameProgress() {
   gameState.progressCheckInterval = progressCheckInterval;
 }
 
-// Обработка провала уровня
 function handleLevelFailed() {
   stopTimer();
+
+  const progress = sliceGame.getProgress();
+  const failureReasonElement = document.getElementById("failureReason");
+
+  if (progress.cuts > progress.targetCuts) {
+    failureReasonElement.textContent = `Слишком много разрезов! Сделано ${progress.currentCuts}, нужно ${progress.targetCuts}`;
+  } else if (progress.currentPieces > progress.targetPieces) {
+    failureReasonElement.textContent = `Слишком много кусков! Получилось ${progress.currentPieces}, нужно ${progress.targetPieces}`;
+  } else {
+    failureReasonElement.textContent = "Условия уровня не выполнены!";
+  }
+
   showLevelSkippedModal();
 }
 
@@ -177,7 +183,6 @@ function handleLevelComplete() {
   completeLevel(false);
 }
 
-// Запустить таймер
 function startTimer() {
   if (timerInterval) {
     clearInterval(timerInterval);
@@ -218,7 +223,6 @@ export function handleCorrectAnswer(timeSpent = 0) {
 
   updateUI();
 
-  // Показать визуальную обратную связь
   showFeedback(`+${earned} очков!`, "success");
 
   setTimeout(() => {
@@ -227,7 +231,6 @@ export function handleCorrectAnswer(timeSpent = 0) {
   }, 2000);
 }
 
-// Завершить вопрос с неправильным ответом
 export function handleWrongAnswer() {
   if (isPending) return;
   isPending = true;
@@ -251,12 +254,6 @@ function showFeedback(message, type) {
   setTimeout(() => {
     feedback.remove();
   }, 2000);
-}
-
-// Следующий вопрос (не используется в игре с разрезанием)
-function nextQuestion() {
-  // Эта функция не нужна для игры "Разрежь фигуру"
-  // Прогресс отслеживается в checkGameProgress()
 }
 
 // Завершить уровень
@@ -377,7 +374,6 @@ nextLevelBtn.addEventListener("click", () => {
 retryLevelBtn.addEventListener("click", () => {
   levelSkippedModal.style.display = "none";
 
-  // Сбрасываем статистику уровня (очки остаются)
   gameState.resetLevelStats();
   // Перезапускаем текущий уровень
   gameState.startLevel(gameState.currentLevel);
