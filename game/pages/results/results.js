@@ -1,14 +1,11 @@
 // Скрипт страницы результатов
-import { getCurrentPlayer, getLeaderboard, getPlayerBestScore, getPlayerRank, exportData, clearLeaderboard } from '../../utils/storage.js';
+import { clearLeaderboard, exportData, getCurrentPlayer, getLeaderboard, getPlayerRank } from '../../utils/storage.js';
 
 // DOM элементы
 const playerNameElement = document.getElementById('playerName');
 const finalScoreElement = document.getElementById('finalScore');
 const finalLevelElement = document.getElementById('finalLevel');
 const gameTimeElement = document.getElementById('gameTime');
-const correctAnswersElement = document.getElementById('correctAnswers');
-const wrongAnswersElement = document.getElementById('wrongAnswers');
-const accuracyElement = document.getElementById('accuracy');
 
 const leaderboardBodyElement = document.getElementById('leaderboardBody');
 const totalGamesElement = document.getElementById('totalGames');
@@ -37,7 +34,6 @@ function initResults() {
     return;
   }
   
-  // Проверяем, пришли ли мы из игры
   const tempGameState = localStorage.getItem('tempGameState');
   if (tempGameState) {
     returnToGameBtn.style.display = 'inline-block';
@@ -47,18 +43,15 @@ function initResults() {
   loadLeaderboard();
 }
 
-// Загрузить результаты игрока
 function loadPlayerResults() {
   playerNameElement.textContent = currentPlayerName;
   
-  // Получаем лучший завершенный результат игрока
   const leaderboard = getLeaderboard();
   const completedResults = leaderboard.filter(
     entry => entry.playerName === currentPlayerName && entry.isComplete
   );
   const bestResult = completedResults.length > 0 ? completedResults[0] : null;
   
-  // Скрываем секцию результатов, если нет завершенных игр
   const playerResultsSection = document.querySelector('.player-results');
   if (!bestResult) {
     playerResultsSection.style.display = 'none';
@@ -71,18 +64,15 @@ function loadPlayerResults() {
     finalScoreElement.textContent = bestResult.score;
     finalLevelElement.textContent = bestResult.level;
     
-    // Форматируем время
     const minutes = Math.floor(bestResult.time / 60);
     const seconds = bestResult.time % 60;
     gameTimeElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   } else {
-    // Нет результатов
     finalScoreElement.textContent = '0';
     finalLevelElement.textContent = '0';
     gameTimeElement.textContent = '00:00';
   }
   
-  // Получаем позицию в рейтинге
   const rank = getPlayerRank(currentPlayerName);
   playerRankElement.textContent = rank ? `#${rank}` : '-';
 }
@@ -98,7 +88,6 @@ function loadLeaderboard() {
   displayLeaderboard(allResults);
 }
 
-// Отобразить рейтинг
 function displayLeaderboard(results) {
   leaderboardBodyElement.innerHTML = '';
   

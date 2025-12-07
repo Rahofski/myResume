@@ -1,4 +1,3 @@
-// Модуль для работы с геометрией и генерации выпуклых многоугольников
 
 /**
  * Генерирует выпуклый многоугольник методом полярных координат
@@ -12,13 +11,11 @@ export function generateConvexPolygon(sides, centerX, centerY, radius) {
   const points = [];
   const angleStep = (2 * Math.PI) / sides;
   
-  // Генерируем случайные радиусы для каждой вершины (60-95% от базового)
   const radii = [];
   for (let i = 0; i < sides; i++) {
     radii.push(radius * (0.6 + Math.random() * 0.35));
   }
   
-  // Создаем точки по кругу с небольшим случайным смещением угла
   for (let i = 0; i < sides; i++) {
     const baseAngle = i * angleStep;
     const angleOffset = (Math.random() - 0.5) * angleStep * 0.3; // ±15% от шага

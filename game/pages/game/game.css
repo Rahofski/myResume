@@ -469,6 +469,24 @@ body {
   color: #fff172;
   font-size: 14px;
   text-align: center;
+  line-height: 1.6;
+}
+
+#movingHint {
+  display: block;
+  margin-top: 8px;
+  color: #ff8c00;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .placeholder {

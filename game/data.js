@@ -15,7 +15,7 @@ export const LEVELS = [
     targetCuts: 1,
     targetPieces: 2,
     timeLimit: 60,
-    instruction: "Разрежь треугольник пополам одним разрезом"
+    instruction: "Разрежь треугольник пополам одним разрезом",
   },
   {
     level: 2,
@@ -23,7 +23,7 @@ export const LEVELS = [
     targetCuts: 2,
     targetPieces: 3,
     timeLimit: 45,
-    instruction: "Разрежь четырёхугольник на 3 части двумя разрезами"
+    instruction: "Разрежь четырёхугольник на 3 части двумя разрезами",
   },
   {
     level: 3,
@@ -31,7 +31,7 @@ export const LEVELS = [
     targetCuts: 2,
     targetPieces: 3,
     timeLimit: 45,
-    instruction: "Разрежь пятиугольник на 3 части двумя разрезами"
+    instruction: "Разрежь пятиугольник на 3 части двумя разрезами",
   },
   {
     level: 4,
@@ -39,7 +39,8 @@ export const LEVELS = [
     targetCuts: 3,
     targetPieces: 4,
     timeLimit: 30,
-    instruction: "Разрежь шестиугольник на 4 части тремя разрезами"
+    instruction:
+      "⚡ Разрежь движущийся шестиугольник на 4 части тремя разрезами",
   },
   {
     level: 5,
@@ -47,7 +48,8 @@ export const LEVELS = [
     targetCuts: 3,
     targetPieces: 4,
     timeLimit: 30,
-    instruction: "Разрежь семиугольник на 4 части тремя разрезами"
+    instruction:
+      "⚡ Разрежь движущийся семиугольник на 4 части тремя разрезами",
   },
   {
     level: 6,
@@ -55,8 +57,9 @@ export const LEVELS = [
     targetCuts: 4,
     targetPieces: 5,
     timeLimit: 30,
-    instruction: "Разрежь восьмиугольник на 5 частей четырьмя разрезами"
-  }
+    instruction:
+      "⚡ Разрежь движущийся восьмиугольник на 5 частей четырьмя разрезами",
+  },
 ];
 
 /**
@@ -72,22 +75,6 @@ export function getLevelConfig(levelNumber) {
 export function getMaxLevel() {
   return LEVELS.length;
 }
-
-// Пример старой структуры данных (можно удалить):
-/*
-export const questions = [
-  { text: "У кого 4 ноги?", property: "legs", value: 4 },
-  { text: "Кто умеет летать?", property: "hasWings", value: true },
-  // ... еще вопросы
-];
-*/
-
-// Пока оставляем пустым - заполнится когда определится тема игры
-export const gameData = {
-  level1: {},
-  level2: {},
-  level3: {}
-};
 
 // Константы игры
 export const GAME_CONSTANTS = {

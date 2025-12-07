@@ -49,6 +49,7 @@
           <li><strong>Строгие правила:</strong> Нужно сделать <strong>ровно</strong> столько разрезов, сколько указано в уровне</li>
           <li>Разрезы должны дать <strong>ровно</strong> заданное количество кусков</li>
           <li>Если кусков или разрезов больше - уровень провален</li>
+          <li><strong>⚡ С 4 уровня фигуры начинают двигаться!</strong> Сделанные разрезы движутся вместе с фигурой</li>
           <li>Чем быстрее пройдете уровень, тем больше бонусных очков получите</li>
           <li>Планируйте разрезы заранее - их можно сделать ограниченное количество!</li>
         </ul>
@@ -101,7 +102,8 @@
       <div class="game-content" id="gameContent" style="display: none;">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
         <div class="game-hint">
-          💡 Сделай ровно заданное количество разрезов, чтобы получить нужное количество кусков
+          💡 Сделай ровно заданное количество разрезов, чтобы получить нужное количество кусков<br>
+          <span id="movingHint" style="display: none;">⚡ С 4 уровня фигуры движутся - разрезы движутся вместе с ними!</span>
         </div>
       </div>
     </main>
@@ -187,25 +189,21 @@
       }
     });
 
-    // Открыть модальное окно профиля
     userButton.addEventListener('click', () => {
       updateUserProfile();
       userModal.style.display = 'flex';
     });
 
-    // Закрыть модальное окно профиля
     closeUser.addEventListener('click', () => {
       userModal.style.display = 'none';
     });
 
-    // Закрыть по клику вне модального окна
     userModal.addEventListener('click', (e) => {
       if (e.target === userModal) {
         userModal.style.display = 'none';
       }
     });
 
-    // Обновление данных профиля в модальном окне
     function updateUserProfile() {
       const playerNameElement = document.getElementById('playerName');
       const currentLevelElement = document.getElementById('currentLevel');
@@ -225,7 +223,6 @@
       }
     }
 
-    // Глобальная функция для обновления счета (вызывается из game.js)
     window.updateScoreDisplay = function(score) {
       window.currentGameScore = score;
       const ratingValue = document.getElementById('ratingValue');
