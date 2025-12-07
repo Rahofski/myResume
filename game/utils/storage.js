@@ -27,6 +27,17 @@ export function getCurrentPlayer() {
   }
 }
 
+// Проверка авторизации и редирект
+export function checkAuthAndRedirect(redirectUrl = "../auth/auth.html") {
+  const currentPlayer = getCurrentPlayer();
+  if (!currentPlayer) {
+    alert("Для доступа к игре необходимо авторизоваться!");
+    window.location.href = redirectUrl;
+    return false;
+  }
+  return true;
+}
+
 // Функции для работы с пользователями
 function getUsers() {
   try {
@@ -111,15 +122,24 @@ export function loginUser(nickname, password) {
 // Сохранить результат игры
 export function saveGameResult(gameData) {
   try {
-    const { playerName, score, level, time, date, correctAnswers, wrongAnswers, isComplete } = gameData;
-    
+    const {
+      playerName,
+      score,
+      level,
+      time,
+      date,
+      correctAnswers,
+      wrongAnswers,
+      isComplete,
+    } = gameData;
+
     const leaderboard = getLeaderboard();
-    
+
     if (!isComplete) {
       const existingIndex = leaderboard.findIndex(
-        entry => entry.playerName === playerName && !entry.isComplete
+        (entry) => entry.playerName === playerName && !entry.isComplete
       );
-      
+
       if (existingIndex !== -1) {
         // Обновляем существующую запись
         leaderboard[existingIndex] = {
@@ -130,7 +150,7 @@ export function saveGameResult(gameData) {
           correctAnswers,
           wrongAnswers,
           date: date || new Date().toISOString(),
-          isComplete: false
+          isComplete: false,
         };
       } else {
         // Добавляем новую запись
@@ -142,18 +162,18 @@ export function saveGameResult(gameData) {
           correctAnswers,
           wrongAnswers,
           date: date || new Date().toISOString(),
-          isComplete: false
+          isComplete: false,
         });
       }
     } else {
       // Удаляем промежуточную запись этого игрока
       const tempIndex = leaderboard.findIndex(
-        entry => entry.playerName === playerName && !entry.isComplete
+        (entry) => entry.playerName === playerName && !entry.isComplete
       );
       if (tempIndex !== -1) {
         leaderboard.splice(tempIndex, 1);
       }
-      
+
       // Добавляем финальный результат
       leaderboard.push({
         playerName,
@@ -163,17 +183,17 @@ export function saveGameResult(gameData) {
         correctAnswers,
         wrongAnswers,
         date: date || new Date().toISOString(),
-        isComplete: true
+        isComplete: true,
       });
     }
-    
+
     leaderboard.sort((a, b) => b.score - a.score);
-    
+
     localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify(leaderboard));
-    
+
     return true;
   } catch (error) {
-    console.error('Ошибка сохранения результата:', error);
+    console.error("Ошибка сохранения результата:", error);
     return false;
   }
 }
@@ -182,10 +202,10 @@ export function getLeaderboard(limit = null) {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.LEADERBOARD);
     const leaderboard = data ? JSON.parse(data) : [];
-    
+
     return limit ? leaderboard.slice(0, limit) : leaderboard;
   } catch (error) {
-    console.error('Ошибка загрузки рейтинга:', error);
+    console.error("Ошибка загрузки рейтинга:", error);
     return [];
   }
 }
@@ -198,10 +218,12 @@ export function getTopPlayers(count = 10) {
 export function getPlayerRank(playerName) {
   try {
     const leaderboard = getLeaderboard();
-    const index = leaderboard.findIndex(entry => entry.playerName === playerName);
+    const index = leaderboard.findIndex(
+      (entry) => entry.playerName === playerName
+    );
     return index >= 0 ? index + 1 : null;
   } catch (error) {
-    console.error('Ошибка получения позиции:', error);
+    console.error("Ошибка получения позиции:", error);
     return null;
   }
 }
@@ -209,13 +231,15 @@ export function getPlayerRank(playerName) {
 export function getPlayerBestScore(playerName) {
   try {
     const leaderboard = getLeaderboard();
-    const playerResults = leaderboard.filter(entry => entry.playerName === playerName);
-    
+    const playerResults = leaderboard.filter(
+      (entry) => entry.playerName === playerName
+    );
+
     if (playerResults.length === 0) return null;
-    
+
     return playerResults[0];
   } catch (error) {
-    console.error('Ошибка получения лучшего результата:', error);
+    console.error("Ошибка получения лучшего результата:", error);
     return null;
   }
 }
@@ -225,7 +249,7 @@ export function clearLeaderboard() {
     localStorage.removeItem(STORAGE_KEYS.LEADERBOARD);
     return true;
   } catch (error) {
-    console.error('Ошибка очистки рейтинга:', error);
+    console.error("Ошибка очистки рейтинга:", error);
     return false;
   }
 }
@@ -235,7 +259,7 @@ export function clearCurrentPlayer() {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_PLAYER);
     return true;
   } catch (error) {
-    console.error('Ошибка очистки игрока:', error);
+    console.error("Ошибка очистки игрока:", error);
     return false;
   }
 }
@@ -244,10 +268,10 @@ export function exportData() {
   try {
     return {
       currentPlayer: getCurrentPlayer(),
-      leaderboard: getLeaderboard()
+      leaderboard: getLeaderboard(),
     };
   } catch (error) {
-    console.error('Ошибка экспорта данных:', error);
+    console.error("Ошибка экспорта данных:", error);
     return null;
   }
 }
