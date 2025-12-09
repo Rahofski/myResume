@@ -74,8 +74,7 @@ export class SliceGame {
   startMoving() {
     this.isMoving = true;
 
-    // Скорость зависит от уровня
-    const baseSpeed = 1 + (this.currentLevel - 4) * 0.3;
+    const baseSpeed = 1 + (this.currentLevel - 4) * 2;
     const angle = Math.random() * Math.PI * 2;
 
     this.velocity = {
@@ -113,6 +112,10 @@ export class SliceGame {
    * Обновление позиции фигуры
    */
   updatePosition() {
+    // Сохраняем предыдущую позицию центра
+    const prevCenterX = this.polygonCenter.x;
+    const prevCenterY = this.polygonCenter.y;
+
     // Двигаем центр
     this.polygonCenter.x += this.velocity.x;
     this.polygonCenter.y += this.velocity.y;
@@ -144,14 +147,15 @@ export class SliceGame {
       );
     }
 
-    // Обновляем координаты всех вершин многоугольника
-    const radius = Math.min(this.canvas.width, this.canvas.height) * 0.3;
-    this.polygon = generateConvexPolygon(
-      this.polygon.length,
-      this.polygonCenter.x,
-      this.polygonCenter.y,
-      radius
-    );
+    // Вычисляем смещение
+    const deltaX = this.polygonCenter.x - prevCenterX;
+    const deltaY = this.polygonCenter.y - prevCenterY;
+
+    // Сдвигаем все вершины полигона на то же смещение (без пересоздания формы)
+    this.polygon = this.polygon.map(point => ({
+      x: point.x + deltaX,
+      y: point.y + deltaY
+    }));
   }
 
   /**
