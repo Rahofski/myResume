@@ -29,18 +29,18 @@ export const LEVELS = [
     level: 3,
     sides: 5,
     targetCuts: 2,
-    targetPieces: 3,
+    targetPieces: 4,
     timeLimit: 45,
-    instruction: "Разрежь пятиугольник на 3 части двумя разрезами",
+    instruction: "Разрежь пятиугольник на 4 части двумя разрезами",
   },
   {
     level: 4,
     sides: 6,
     targetCuts: 3,
-    targetPieces: 4,
+    targetPieces: 5,
     timeLimit: 30,
     instruction:
-      "⚡ Разрежь движущийся шестиугольник на 4 части тремя разрезами",
+      "⚡ Разрежь движущийся шестиугольник на 5 частей тремя разрезами",
   },
   {
     level: 5,
