@@ -407,3 +407,59 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 document.addEventListener("DOMContentLoaded", initGame);
+
+// Панель для преподавателя - быстрый переход между уровнями
+const teacherPanelToggle = document.getElementById("teacherPanelToggle");
+const teacherPanelContent = document.getElementById("teacherPanelContent");
+const teacherLevelBtns = document.querySelectorAll(".teacher-level-btn");
+
+if (teacherPanelToggle) {
+  teacherPanelToggle.addEventListener("click", () => {
+    teacherPanelContent.classList.toggle("open");
+    teacherPanelToggle.querySelector(".toggle-arrow").textContent =
+      teacherPanelContent.classList.contains("open") ? "▲" : "▼";
+  });
+}
+
+teacherLevelBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetLevel = parseInt(btn.dataset.level);
+
+    // Останавливаем текущую игру
+    stopTimer();
+    if (gameState.progressCheckInterval) {
+      clearInterval(gameState.progressCheckInterval);
+    }
+    if (sliceGame) {
+      sliceGame.stopMoving();
+    }
+
+    // Закрываем все модальные окна
+    pauseModal.style.display = "none";
+    levelCompleteModal.style.display = "none";
+    levelSkippedModal.style.display = "none";
+    gameOverModal.style.display = "none";
+
+    // Сбрасываем время для нового уровня
+    const levelConfig = getLevelConfig(targetLevel);
+    gameState.timeRemaining = levelConfig.timeLimit;
+
+    // Устанавливаем новый уровень
+    gameState.currentLevel = targetLevel;
+    gameState.isGameActive = true;
+    gameState.isPaused = false;
+
+    // Обновляем UI
+    currentLevelElement.textContent = targetLevel;
+    updateTimerDisplay();
+
+    // Показываем intro уровня
+    levelIntroElement.style.display = "flex";
+    gameContentElement.style.display = "none";
+    showLevelIntro(targetLevel);
+
+    // Обновляем активную кнопку
+    teacherLevelBtns.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});

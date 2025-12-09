@@ -46,6 +46,91 @@ body {
   transform: translateX(-3px);
 }
 
+/* Панель для преподавателя */
+.teacher-panel {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.teacher-panel-header {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background 0.3s;
+}
+
+.teacher-panel-header:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.toggle-arrow {
+  font-size: 10px;
+  transition: transform 0.3s;
+}
+
+.teacher-panel-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 12px;
+}
+
+.teacher-panel-content.open {
+  max-height: 200px;
+  padding: 12px;
+}
+
+.teacher-level-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.teacher-level-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.teacher-level-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.teacher-level-btn:active {
+  transform: scale(0.95);
+}
+
+.teacher-level-btn.active {
+  background: linear-gradient(135deg, #ff357a, #ff6b9d);
+  color: #fff;
+  border-color: #ff357a;
+}
+
 /* Фиксированная панель в правом верхнем углу */
 .top-right-panel {
   position: absolute;
@@ -721,24 +806,213 @@ body {
 
 /* Адаптивность */
 @media (max-width: 768px) {
+  body {
+    padding: 10px;
+    padding-top: 70px;
+  }
+
+  .btn-back-to-site {
+    padding: 8px 16px;
+    font-size: 13px;
+    top: 10px;
+    left: 10px;
+  }
+
+  .top-right-panel {
+    top: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+
+  .icon-button {
+    width: 45px;
+    height: 45px;
+  }
+
+  .icon-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .game-container {
+    border-radius: 12px;
+  }
+
   .game-header {
     flex-direction: column;
     text-align: center;
+    padding: 15px 20px;
+    gap: 10px;
+  }
+
+  .game-header > div {
+    font-size: 14px;
+  }
+
+  .game-header strong {
+    font-size: 16px;
   }
   
   .timer strong {
     font-size: 24px;
   }
   
+  .level-intro {
+    height: auto;
+    min-height: 300px;
+    padding: 30px 15px;
+  }
+
   .level-intro h2 {
-    font-size: 32px;
+    font-size: 28px;
+  }
+
+  .level-intro p {
+    font-size: 18px;
+  }
+
+  .btn-start {
+    padding: 12px 30px;
+    font-size: 16px;
+  }
+
+  .game-area {
+    padding: 20px 15px;
+    min-height: 350px;
+  }
+
+  #gameCanvas {
+    border-width: 2px;
+    border-radius: 10px;
+  }
+
+  .game-hint {
+    padding: 12px 15px;
+    font-size: 13px;
   }
   
   .game-controls {
     flex-direction: column;
+    gap: 10px;
   }
   
   .btn-control {
     width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .modal-content {
+    padding: 25px 20px;
+    max-width: 90%;
+  }
+
+  .modal-content h2 {
+    font-size: 24px;
+  }
+
+  .modal-content p {
+    font-size: 15px;
+  }
+
+  .modal-help {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .modal-help h2 {
+    font-size: 20px;
+  }
+
+  .help-content li {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .teacher-panel {
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .teacher-panel-header {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .teacher-level-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 5px;
+    padding-top: 60px;
+  }
+
+  .btn-back-to-site {
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: 20px;
+  }
+
+  .top-right-panel {
+    gap: 6px;
+  }
+
+  .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .icon-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .game-header {
+    padding: 12px 15px;
+  }
+
+  .game-header > div {
+    font-size: 12px;
+  }
+
+  .game-header strong {
+    font-size: 14px;
+  }
+
+  .level-intro h2 {
+    font-size: 22px;
+  }
+
+  .level-intro p {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .game-area {
+    padding: 15px 10px;
+    min-height: 280px;
+  }
+
+  .btn-control {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .modal-content {
+    padding: 20px 15px;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+  }
+
+  .btn-modal {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
