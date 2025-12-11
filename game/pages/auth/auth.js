@@ -15,7 +15,15 @@ const submitBtnInput = document.getElementById("submitBtnInput");
 const formTitle = document.getElementById("form-title");
 const toggleFormBtn = document.getElementById("toggle-form-btn");
 
-let isRegistrationMode = true;
+let isRegistrationMode = false;
+
+// Устанавливаем начальное состояние - авторизация
+formTitle.textContent = "Авторизация";
+submitBtnInput.value = "Войти";
+confirmPasswordBox.style.display = "none";
+generateNickButton.style.display = "none";
+toggleFormBtn.querySelector("button").textContent =
+  "Нет аккаунта? Зарегистрироваться";
 
 generateNickButton.addEventListener("click", () => {
   const randomNick = generateNickname();

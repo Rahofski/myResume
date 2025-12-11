@@ -1,6 +1,13 @@
 // Основной скрипт игры "Разрежь фигуру"
 import gameState from "../../utils/gameState.js";
-import { getCurrentPlayer, saveGameResult } from "../../utils/storage.js";
+import {
+  getCurrentPlayer,
+  saveGameResult,
+  getPlayerProgress,
+  saveLevelResult,
+  getTotalScore,
+  isLevelUnlocked,
+} from "../../utils/storage.js";
 import { SliceGame } from "../../utils/sliceGame.js";
 import { getLevelConfig, getMaxLevel } from "../../data.js";
 
@@ -47,6 +54,58 @@ let timerInterval = null;
 let isPending = false;
 let sliceGame = null;
 
+// Функция для установки размера canvas на весь экран
+function resizeCanvas() {
+  const headerHeight = 60;
+  const levelNavHeight = 52; // Панель уровней
+  const footerHeight = 70;
+  const hintHeight = 45;
+  const padding = 30;
+
+  const availableWidth = window.innerWidth - padding * 2;
+  const availableHeight =
+    window.innerHeight -
+    headerHeight -
+    levelNavHeight -
+    footerHeight -
+    hintHeight -
+    padding;
+
+  // Используем максимально возможный размер с пропорциями 4:3
+  const aspectRatio = 4 / 3;
+  let canvasWidth, canvasHeight;
+
+  if (availableWidth / availableHeight > aspectRatio) {
+    // Высота - ограничивающий фактор
+    canvasHeight = availableHeight;
+    canvasWidth = canvasHeight * aspectRatio;
+  } else {
+    // Ширина - ограничивающий фактор
+    canvasWidth = availableWidth;
+    canvasHeight = canvasWidth / aspectRatio;
+  }
+
+  // Минимальные размеры
+  canvasWidth = Math.max(400, Math.floor(canvasWidth));
+  canvasHeight = Math.max(300, Math.floor(canvasHeight));
+
+  gameCanvas.width = canvasWidth;
+  gameCanvas.height = canvasHeight;
+
+  // Если игра уже инициализирована, перерисовываем
+  if (sliceGame) {
+    sliceGame.updateCanvasSize(canvasWidth, canvasHeight);
+  }
+}
+
+// Вызываем при загрузке и при изменении размера окна
+window.addEventListener("resize", () => {
+  resizeCanvas();
+});
+
+// Инициализация размера
+resizeCanvas();
+
 function initGame() {
   const playerName = getCurrentPlayer();
 
@@ -61,8 +120,30 @@ function initGame() {
 
   sliceGame = new SliceGame(gameCanvas);
 
+  // Инициализируем панель уровней
+  initLevelNav();
+
+  // Проверяем, есть ли сохранённое состояние для продолжения
+  const tempGameState = localStorage.getItem("tempGameState");
+  let startLevel = 1;
+
+  if (tempGameState) {
+    try {
+      const savedState = JSON.parse(tempGameState);
+      if (savedState.returnToGame && savedState.currentLevel) {
+        startLevel = savedState.currentLevel;
+        gameState.currentLevel = startLevel;
+        gameState.startLevel(startLevel);
+      }
+      // Удаляем временное состояние после использования
+      localStorage.removeItem("tempGameState");
+    } catch (e) {
+      console.error("Ошибка чтения сохранённого состояния:", e);
+    }
+  }
+
   updateUI();
-  showLevelIntro(1);
+  showLevelIntro(startLevel);
 }
 
 // Обновить интерфейс
@@ -77,6 +158,92 @@ function updateUI() {
 
   // Обновляем таймер
   updateTimerDisplay();
+
+  // Обновляем панель уровней
+  updateLevelNav();
+}
+
+// Обновление панели навигации по уровням
+function updateLevelNav() {
+  const playerName = getCurrentPlayer();
+  if (!playerName) return;
+
+  const progress = getPlayerProgress(playerName);
+  const levelButtons = document.querySelectorAll(".level-nav-btn");
+  const totalScoreElement = document.getElementById("totalScore");
+
+  levelButtons.forEach((btn) => {
+    const level = parseInt(btn.dataset.level);
+    const scoreSpan = btn.querySelector(".level-score");
+    const levelScore = progress.levelScores[level] || 0;
+    const unlocked = isLevelUnlocked(playerName, level);
+
+    // Обновляем очки или замочек
+    if (!unlocked) {
+      scoreSpan.textContent = "🔒";
+    } else if (levelScore > 0) {
+      scoreSpan.textContent = levelScore;
+    } else {
+      scoreSpan.textContent = "—";
+    }
+
+    // Убираем все классы состояния
+    btn.classList.remove("active", "completed", "locked");
+
+    // Определяем состояние кнопки
+    if (level === gameState.currentLevel) {
+      btn.classList.add("active");
+    } else if (levelScore > 0) {
+      btn.classList.add("completed");
+    } else if (!unlocked) {
+      btn.classList.add("locked");
+    }
+  });
+
+  // Обновляем общий счёт
+  if (totalScoreElement) {
+    totalScoreElement.textContent = getTotalScore(playerName);
+  }
+}
+
+// Обработчики кнопок уровней
+function initLevelNav() {
+  const levelButtons = document.querySelectorAll(".level-nav-btn");
+  const playerName = getCurrentPlayer();
+
+  levelButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const level = parseInt(btn.dataset.level);
+
+      // Проверяем, разблокирован ли уровень
+      if (!isLevelUnlocked(playerName, level)) {
+        alert("Этот уровень ещё заблокирован! Пройдите предыдущие уровни.");
+        return;
+      }
+
+      // Если игра активна, спрашиваем подтверждение
+      if (gameState.isGameActive && level !== gameState.currentLevel) {
+        if (
+          !confirm(
+            "Перейти на другой уровень? Текущий прогресс уровня будет потерян."
+          )
+        ) {
+          return;
+        }
+        stopTimer();
+        if (sliceGame) {
+          sliceGame.stopMoving();
+        }
+      }
+
+      // Переходим на выбранный уровень
+      gameState.currentLevel = level;
+      gameState.resetLevelStats();
+      gameState.startLevel(level);
+      showLevelIntro(level);
+      updateUI();
+    });
+  });
 }
 
 function updateTimerDisplay() {
@@ -90,7 +257,7 @@ function updateTimerDisplay() {
   } else if (time <= 20) {
     timerElement.style.color = "#ffaa00";
   } else {
-    timerElement.style.color = "#333";
+    timerElement.style.color = "#fff";
   }
 }
 
@@ -205,8 +372,18 @@ function stopTimer() {
 }
 
 function handleTimeUp() {
-  gameState.endGame();
-  showGameOverModal("Время вышло! ⏰", "К сожалению, время истекло.");
+  // Останавливаем игру, но не заканчиваем полностью
+  if (sliceGame) {
+    sliceGame.stopMoving();
+  }
+  if (gameState.progressCheckInterval) {
+    clearInterval(gameState.progressCheckInterval);
+  }
+
+  // Показываем модалку с возможностью перепройти уровень
+  const failureReasonElement = document.getElementById("failureReason");
+  failureReasonElement.textContent = "Время вышло! ⏰";
+  showLevelSkippedModal();
 }
 
 export function handleCorrectAnswer(timeSpent = 0) {
@@ -260,12 +437,16 @@ function completeLevel(isSkipped = false) {
   gameState.addTimeBonus();
 
   const stats = gameState.getStats();
+  const playerName = getCurrentPlayer();
+
+  // Сохраняем очки за уровень (хранится максимум)
+  saveLevelResult(playerName, gameState.currentLevel, gameState.levelScore);
 
   // Сохраняем прогресс после каждого успешно пройденного уровня
   const totalPlayTime = Date.now() - gameState.startTime;
   const currentResult = {
-    playerName: getCurrentPlayer(),
-    score: stats.score,
+    playerName: playerName,
+    score: getTotalScore(playerName), // Используем сумму максимумов за уровни
     level: gameState.currentLevel,
     time: Math.floor(totalPlayTime / 1000),
     correctAnswers: stats.correctAnswers,
@@ -274,6 +455,9 @@ function completeLevel(isSkipped = false) {
     isComplete: false,
   };
   saveGameResult(currentResult);
+
+  // Обновляем панель уровней
+  updateLevelNav();
 
   if (gameState.isGameComplete()) {
     completeGame();
@@ -285,7 +469,8 @@ function completeLevel(isSkipped = false) {
 function showLevelCompleteModal(stats) {
   const progress = sliceGame.getProgress();
 
-  document.getElementById("levelScore").textContent = stats.score;
+  // Показываем очки за этот уровень, а не общую сумму
+  document.getElementById("levelScore").textContent = gameState.levelScore;
   document.getElementById("levelCorrect").textContent = progress.currentCuts;
   document.getElementById("levelWrong").textContent = progress.currentPieces;
 
@@ -297,10 +482,22 @@ function showLevelSkippedModal() {
 }
 
 function completeGame() {
+  const playerName = getCurrentPlayer();
   const result = gameState.endGame();
   result.isComplete = true;
+  result.score = getTotalScore(playerName); // Сумма максимумов за уровни
   saveGameResult(result);
-  showGameOverModal("Поздравляем! 🎉", "Вы прошли все уровни!");
+
+  // Сохраняем состояние для возможности продолжить и улучшить результаты
+  const gameStateData = {
+    currentLevel: 1, // Начать с первого уровня при продолжении
+    returnToGame: true,
+    gameComplete: true, // Флаг что игра пройдена
+  };
+  localStorage.setItem("tempGameState", JSON.stringify(gameStateData));
+
+  // Перенаправляем на страницу рейтинга
+  window.location.href = "../results/results.html";
 }
 
 function showGameOverModal(title, message) {
@@ -327,10 +524,16 @@ resumeBtn.addEventListener("click", () => {
 skipLevelBtn.addEventListener("click", () => {
   if (
     confirm(
-      "Вы уверены, что хотите завершить уровень досрочно?\n\nВНИМАНИЕ: Очки за этот уровень НЕ будут начислены!"
+      "Завершить игру и перейти к рейтингу?\n\nВы можете вернуться позже и продолжить с текущего прогресса."
     )
   ) {
-    completeLevel(true);
+    stopTimer();
+    if (sliceGame) {
+      sliceGame.stopMoving();
+    }
+    // Переходим на рейтинг БЕЗ сохранения состояния для возврата
+    localStorage.removeItem("tempGameState");
+    window.location.href = "../results/results.html";
   }
 });
 
@@ -374,13 +577,20 @@ viewResultsBtn.addEventListener("click", () => {
   window.location.href = "../results/results.html";
 });
 
-if (viewResultsFromGameBtn) {
-  viewResultsFromGameBtn.addEventListener("click", () => {
+// Кнопка рейтинга в хедере - сохраняет состояние для возврата
+const ratingButton = document.getElementById("ratingButton");
+if (ratingButton) {
+  ratingButton.addEventListener("click", () => {
+    // Ставим игру на паузу
+    gameState.pauseGame();
+    if (sliceGame) {
+      sliceGame.stopMoving();
+    }
+    stopTimer();
+
+    // Сохраняем состояние для возврата на текущий уровень
     const gameStateData = {
       currentLevel: gameState.currentLevel,
-      score: gameState.getStats().score,
-      correctAnswers: gameState.getStats().correctAnswers,
-      wrongAnswers: gameState.getStats().wrongAnswers,
       returnToGame: true,
     };
     localStorage.setItem("tempGameState", JSON.stringify(gameStateData));

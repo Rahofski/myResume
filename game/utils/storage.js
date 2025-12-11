@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   LEADERBOARD: "leaderboard",
   GAME_RESULTS: "gameResults",
   USERS: "users",
+  PLAYER_PROGRESS: "playerProgress",
 };
 
 export function saveCurrentPlayer(playerName) {
@@ -27,7 +28,6 @@ export function getCurrentPlayer() {
   }
 }
 
-// Проверка авторизации и редирект
 export function checkAuthAndRedirect(redirectUrl = "../auth/auth.html") {
   const currentPlayer = getCurrentPlayer();
   if (!currentPlayer) {
@@ -38,7 +38,6 @@ export function checkAuthAndRedirect(redirectUrl = "../auth/auth.html") {
   return true;
 }
 
-// Функции для работы с пользователями
 function getUsers() {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.USERS);
@@ -59,7 +58,6 @@ function saveUsers(users) {
   }
 }
 
-// Простое хеширование пароля (для демонстрации)
 function hashPassword(password) {
   let hash = 0;
   for (let i = 0; i < password.length; i++) {
@@ -70,7 +68,6 @@ function hashPassword(password) {
   return hash.toString();
 }
 
-// Регистрация нового пользователя
 export function registerUser(nickname, password) {
   try {
     const users = getUsers();
@@ -119,7 +116,6 @@ export function loginUser(nickname, password) {
   }
 }
 
-// Сохранить результат игры
 export function saveGameResult(gameData) {
   try {
     const {
@@ -166,7 +162,6 @@ export function saveGameResult(gameData) {
         });
       }
     } else {
-      // Удаляем промежуточную запись этого игрока
       const tempIndex = leaderboard.findIndex(
         (entry) => entry.playerName === playerName && !entry.isComplete
       );
@@ -174,7 +169,6 @@ export function saveGameResult(gameData) {
         leaderboard.splice(tempIndex, 1);
       }
 
-      // Добавляем финальный результат
       leaderboard.push({
         playerName,
         score,
@@ -210,7 +204,6 @@ export function getLeaderboard(limit = null) {
   }
 }
 
-// Получить топ игроков
 export function getTopPlayers(count = 10) {
   return getLeaderboard(count);
 }
@@ -282,11 +275,119 @@ export function importData(data) {
       saveCurrentPlayer(data.currentPlayer);
     }
     if (data.leaderboard) {
-      localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify(data.leaderboard));
+      localStorage.setItem(
+        STORAGE_KEYS.LEADERBOARD,
+        JSON.stringify(data.leaderboard)
+      );
     }
     return true;
   } catch (error) {
-    console.error('Ошибка импорта данных:', error);
+    console.error("Ошибка импорта данных:", error);
+    return false;
+  }
+}
+
+// ===== ПРОГРЕСС ИГРОКА ПО УРОВНЯМ =====
+
+/**
+ * Получить прогресс игрока
+ * Возвращает объект: { maxUnlockedLevel: number, levelScores: { [level]: score } }
+ */
+export function getPlayerProgress(playerName) {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.PLAYER_PROGRESS);
+    const allProgress = data ? JSON.parse(data) : {};
+
+    return (
+      allProgress[playerName] || {
+        maxUnlockedLevel: 1,
+        levelScores: {},
+      }
+    );
+  } catch (error) {
+    console.error("Ошибка получения прогресса:", error);
+    return { maxUnlockedLevel: 1, levelScores: {} };
+  }
+}
+
+/**
+ * Сохранить результат уровня
+ * Обновляет maxUnlockedLevel и сохраняет максимальный score за уровень
+ */
+export function saveLevelResult(playerName, level, score) {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.PLAYER_PROGRESS);
+    const allProgress = data ? JSON.parse(data) : {};
+
+    if (!allProgress[playerName]) {
+      allProgress[playerName] = {
+        maxUnlockedLevel: 1,
+        levelScores: {},
+      };
+    }
+
+    const progress = allProgress[playerName];
+
+    // Сохраняем максимальный score за уровень (не меньше 0)
+    const currentBest = progress.levelScores[level] || 0;
+    progress.levelScores[level] = Math.max(currentBest, Math.max(0, score));
+
+    // Разблокируем следующий уровень если прошли текущий
+    if (level >= progress.maxUnlockedLevel && level < 6) {
+      progress.maxUnlockedLevel = level + 1;
+    }
+
+    localStorage.setItem(
+      STORAGE_KEYS.PLAYER_PROGRESS,
+      JSON.stringify(allProgress)
+    );
+    return true;
+  } catch (error) {
+    console.error("Ошибка сохранения результата уровня:", error);
+    return false;
+  }
+}
+
+/**
+ * Получить общий счёт игрока (сумма лучших результатов по всем уровням)
+ */
+export function getTotalScore(playerName) {
+  const progress = getPlayerProgress(playerName);
+  return Object.values(progress.levelScores).reduce(
+    (sum, score) => sum + score,
+    0
+  );
+}
+
+/**
+ * Проверить, разблокирован ли уровень
+ */
+export function isLevelUnlocked(playerName, level) {
+  const progress = getPlayerProgress(playerName);
+  return level <= progress.maxUnlockedLevel;
+}
+
+/**
+ * Сбросить прогресс игрока (все уровни закрываются, только первый доступен)
+ */
+export function resetPlayerProgress(playerName) {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.PLAYER_PROGRESS);
+    const allProgress = data ? JSON.parse(data) : {};
+
+    // Сбрасываем прогресс игрока
+    allProgress[playerName] = {
+      maxUnlockedLevel: 1,
+      levelScores: {},
+    };
+
+    localStorage.setItem(
+      STORAGE_KEYS.PLAYER_PROGRESS,
+      JSON.stringify(allProgress)
+    );
+    return true;
+  } catch (error) {
+    console.error("Ошибка сброса прогресса:", error);
     return false;
   }
 }

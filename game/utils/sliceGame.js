@@ -52,7 +52,8 @@ export class SliceGame {
 
     const centerX = this.canvas.width / 2;
     const centerY = this.canvas.height / 2;
-    const radius = Math.min(this.canvas.width, this.canvas.height) * 0.3;
+    // Радиус адаптивный - 25% от меньшей стороны canvas
+    const radius = Math.min(this.canvas.width, this.canvas.height) * 0.25;
 
     this.polygon = generateConvexPolygon(sides, centerX, centerY, radius);
     this.polygonCenter = { x: centerX, y: centerY };
@@ -120,31 +121,30 @@ export class SliceGame {
     this.polygonCenter.x += this.velocity.x;
     this.polygonCenter.y += this.velocity.y;
 
-    // Отскок от границ
-    const margin = 100; // Отступ от краев
+    // Вычисляем границы фигуры (находим min/max координаты вершин)
+    const bounds = this.getPolygonBounds();
+    const padding = 20; // Отступ от краев canvas
 
-    if (
-      this.polygonCenter.x < margin ||
-      this.polygonCenter.x > this.canvas.width - margin
-    ) {
-      this.velocity.x *= -1;
-      // Корректируем позицию, чтобы не застрять в стене
-      this.polygonCenter.x = Math.max(
-        margin,
-        Math.min(this.canvas.width - margin, this.polygonCenter.x)
-      );
+    // Проверяем столкновение с левым краем
+    if (bounds.minX + this.velocity.x < padding) {
+      this.velocity.x = Math.abs(this.velocity.x);
+      this.polygonCenter.x = prevCenterX + this.velocity.x;
+    }
+    // Проверяем столкновение с правым краем
+    else if (bounds.maxX + this.velocity.x > this.canvas.width - padding) {
+      this.velocity.x = -Math.abs(this.velocity.x);
+      this.polygonCenter.x = prevCenterX + this.velocity.x;
     }
 
-    if (
-      this.polygonCenter.y < margin ||
-      this.polygonCenter.y > this.canvas.height - margin
-    ) {
-      this.velocity.y *= -1;
-      // Корректируем позицию
-      this.polygonCenter.y = Math.max(
-        margin,
-        Math.min(this.canvas.height - margin, this.polygonCenter.y)
-      );
+    // Проверяем столкновение с верхним краем
+    if (bounds.minY + this.velocity.y < padding) {
+      this.velocity.y = Math.abs(this.velocity.y);
+      this.polygonCenter.y = prevCenterY + this.velocity.y;
+    }
+    // Проверяем столкновение с нижним краем
+    else if (bounds.maxY + this.velocity.y > this.canvas.height - padding) {
+      this.velocity.y = -Math.abs(this.velocity.y);
+      this.polygonCenter.y = prevCenterY + this.velocity.y;
     }
 
     // Вычисляем смещение
@@ -152,10 +152,65 @@ export class SliceGame {
     const deltaY = this.polygonCenter.y - prevCenterY;
 
     // Сдвигаем все вершины полигона на то же смещение (без пересоздания формы)
-    this.polygon = this.polygon.map(point => ({
+    this.polygon = this.polygon.map((point) => ({
       x: point.x + deltaX,
-      y: point.y + deltaY
+      y: point.y + deltaY,
     }));
+  }
+
+  /**
+   * Получение границ полигона
+   */
+  getPolygonBounds() {
+    if (!this.polygon || this.polygon.length === 0) {
+      return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    }
+
+    let minX = Infinity,
+      maxX = -Infinity;
+    let minY = Infinity,
+      maxY = -Infinity;
+
+    for (const point of this.polygon) {
+      minX = Math.min(minX, point.x);
+      maxX = Math.max(maxX, point.x);
+      minY = Math.min(minY, point.y);
+      maxY = Math.max(maxY, point.y);
+    }
+
+    return { minX, maxX, minY, maxY };
+  }
+
+  /**
+   * Обновление размера canvas (при resize окна)
+   */
+  updateCanvasSize(width, height) {
+    // Если фигура уже существует, масштабируем её позицию
+    if (this.polygon && this.polygon.length > 0) {
+      const oldCenterX = this.polygonCenter.x;
+      const oldCenterY = this.polygonCenter.y;
+
+      // Новый центр пропорционален новому размеру
+      const newCenterX = width / 2;
+      const newCenterY = height / 2;
+
+      // Смещаем полигон к новому центру
+      const deltaX = newCenterX - oldCenterX;
+      const deltaY = newCenterY - oldCenterY;
+
+      this.polygon = this.polygon.map((point) => ({
+        x: point.x + deltaX,
+        y: point.y + deltaY,
+      }));
+
+      this.polygonCenter = { x: newCenterX, y: newCenterY };
+
+      // Также обновляем радиус фигуры если нужно
+      const newRadius = Math.min(width, height) * 0.3;
+      // Масштабирование можно добавить при необходимости
+    }
+
+    this.redraw();
   }
 
   /**
@@ -299,7 +354,6 @@ export class SliceGame {
    * Применение разреза к фигуре
    */
   applyCut() {
-
     let intersectionCount = 0;
 
     const currentCut = this.cuts[this.cuts.length - 1];

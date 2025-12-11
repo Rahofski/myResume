@@ -147,7 +147,7 @@ p {
   font-size: 20px;
 }
 .bird {
-  background-image: url('../assets/bird-cells.svg');
+  background-image: url('./assets/bird-cells.svg');
   background-size: auto 100%;
   width: 88px;
   height: 125px;
