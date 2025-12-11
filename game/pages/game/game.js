@@ -326,13 +326,22 @@ function checkGameProgress() {
 function handleLevelFailed() {
   stopTimer();
 
+  if (sliceGame) {
+    sliceGame.stopMoving();
+  }
+
   const progress = sliceGame.getProgress();
   const failureReasonElement = document.getElementById("failureReason");
 
-  if (progress.cuts > progress.targetCuts) {
+  if (progress.currentCuts > progress.targetCuts) {
     failureReasonElement.textContent = `Слишком много разрезов! Сделано ${progress.currentCuts}, нужно ${progress.targetCuts}`;
   } else if (progress.currentPieces > progress.targetPieces) {
     failureReasonElement.textContent = `Слишком много кусков! Получилось ${progress.currentPieces}, нужно ${progress.targetPieces}`;
+  } else if (
+    progress.currentCuts === progress.targetCuts &&
+    progress.currentPieces < progress.targetPieces
+  ) {
+    failureReasonElement.textContent = `Недостаточно кусков! Получилось ${progress.currentPieces}, нужно ${progress.targetPieces}`;
   } else {
     failureReasonElement.textContent = "Условия уровня не выполнены!";
   }

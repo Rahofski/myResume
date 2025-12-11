@@ -404,17 +404,26 @@ export class SliceGame {
    * Получение текущего прогресса
    */
   getProgress() {
+    const currentCuts = this.cuts.length;
+    const currentPieces = this.pieces.length;
+
+    // Уровень провален если:
+    // 1. Превышен лимит кусков
+    // 2. Превышен лимит разрезов
+    // 3. Использованы все разрезы, но кусков недостаточно или слишком много
+    const isFailed =
+      currentPieces > this.targetPieces ||
+      currentCuts > this.targetCuts ||
+      (currentCuts === this.targetCuts && currentPieces !== this.targetPieces);
+
     return {
-      currentCuts: this.cuts.length,
+      currentCuts: currentCuts,
       targetCuts: this.targetCuts,
-      currentPieces: this.pieces.length,
+      currentPieces: currentPieces,
       targetPieces: this.targetPieces,
       isComplete:
-        this.cuts.length === this.targetCuts &&
-        this.pieces.length === this.targetPieces,
-      isFailed:
-        this.pieces.length > this.targetPieces ||
-        this.cuts.length > this.targetCuts,
+        currentCuts === this.targetCuts && currentPieces === this.targetPieces,
+      isFailed: isFailed,
     };
   }
 
