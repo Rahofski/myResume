@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Результаты</title>
   <link rel="stylesheet" href="results.css">
+  <script type="module">
+    import { checkAuthAndRedirect } from '../../utils/storage.js';
+    checkAuthAndRedirect();
+  </script>
 </head>
 <body>
   <button 
@@ -15,7 +19,6 @@
     ← Назад на сайт
   </button>
   <div class="results-container">
-    <!-- Заголовок -->
     <header class="results-header">
       <h1>Результаты игры</h1>
     </header>
@@ -45,7 +48,7 @@
 
     <!-- Таблица рейтинга -->
     <section class="leaderboard">
-      <h2>🏆 Рейтинг игроков</h2>
+      <h2>Рейтинг игроков</h2>
       
       <!-- Фильтры -->
       <div class="leaderboard-controls">
@@ -93,17 +96,16 @@
 
     <!-- Кнопки действий -->
     <footer class="actions">
-      <button class="btn-action btn-return" id="returnToGameBtn" style="display: none;">⬅️ Вернуться к игре</button>
-      <button class="btn-action btn-primary" id="playAgainBtn">🔄 Играть снова</button>
-      <button class="btn-action btn-secondary" id="newPlayerBtn">👤 Новый игрок</button>
-      <button class="btn-action" id="exportBtn">📥 Экспорт данных</button>
-      <button class="btn-action btn-danger" id="clearDataBtn">🗑️ Очистить рейтинг</button>
+      <button class="btn-action btn-return" id="returnToGameBtn" style="display: none;">← Вернуться к игре</button>
+      <button class="btn-action btn-primary" id="playAgainBtn">Играть снова</button>
+      <button class="btn-action btn-secondary" id="newPlayerBtn">Новый игрок</button>
+      <button class="btn-action" id="exportBtn">Экспорт данных</button>
+      <button class="btn-action btn-danger" id="clearDataBtn">Очистить рейтинг</button>
     </footer>
   </div>
 
   <script src="results.js" type="module"></script>
   <script>
-    // Скрыть кнопку "Назад на сайт" если страница в iframe
     if (window.self !== window.top) {
       const backButton = document.querySelector('.btn-back-to-site');
       if (backButton) {

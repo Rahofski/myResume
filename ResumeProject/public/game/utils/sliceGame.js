@@ -10,9 +10,8 @@ import {
 export class SliceGame {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    
-    // Игровые параметры
+    this.ctx = canvas.getContext("2d");
+
     this.polygon = null;
     this.cuts = [];
     this.currentCut = null;
@@ -20,66 +19,211 @@ export class SliceGame {
     this.targetCuts = 0;
     this.targetPieces = 0;
     this.pieces = [];
-    
+
+    this.isMoving = false;
+    this.velocity = { x: 0, y: 0 };
+    this.animationFrame = null;
+    this.polygonCenter = { x: 0, y: 0 };
+    this.currentLevel = 1;
+
     // Звук для разреза
-    this.sliceSound = new Audio('../../assets/hit_slash_20827.mp3');
+    this.sliceSound = new Audio("../../assets/hit_slash_20827.mp3");
     this.sliceSound.volume = 0.5;
-    
+
     // Визуальные настройки
-    this.polygonColor = '#ff357a';
-    this.cutColor = '#fff172';
-    this.currentCutColor = 'rgba(255, 241, 114, 0.6)';
-    
+    this.polygonColor = "#ff357a";
+    this.cutColor = "#fff172";
+    this.currentCutColor = "rgba(255, 241, 114, 0.6)";
+
     // Привязка событий
     this.setupEvents();
   }
-  
+
   /**
    * Инициализация уровня
    */
-  initLevel(sides, targetCuts, targetPieces) {
+  initLevel(sides, targetCuts, targetPieces, level = 1) {
     this.targetCuts = targetCuts;
     this.targetPieces = targetPieces;
     this.cuts = [];
     this.pieces = [];
-    
+    this.currentLevel = level;
+
     const centerX = this.canvas.width / 2;
     const centerY = this.canvas.height / 2;
-    const radius = Math.min(this.canvas.width, this.canvas.height) * 0.3;
-    
+    const radius = Math.min(this.canvas.width, this.canvas.height) * 0.25;
+
     this.polygon = generateConvexPolygon(sides, centerX, centerY, radius);
+    this.polygonCenter = { x: centerX, y: centerY };
     this.pieces.push(this.polygon);
-    
+
+    // Запускаем анимацию движения с 4 уровня
+    if (level >= 4) {
+      this.startMoving();
+    } else {
+      this.stopMoving();
+    }
+
     this.redraw();
   }
-  
+
+  /**
+   * Запуск движения фигуры
+   */
+  startMoving() {
+    this.isMoving = true;
+
+    const baseSpeed = 1 + (this.currentLevel - 4) * 2;
+    const angle = Math.random() * Math.PI * 2;
+
+    this.velocity = {
+      x: Math.cos(angle) * baseSpeed,
+      y: Math.sin(angle) * baseSpeed,
+    };
+
+    this.animate();
+  }
+
+  /**
+   * Остановка движения фигуры
+   */
+  stopMoving() {
+    this.isMoving = false;
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
+  }
+
+  /**
+   * Анимация движения
+   */
+  animate() {
+    if (!this.isMoving) return;
+
+    this.updatePosition();
+    this.redraw();
+
+    this.animationFrame = requestAnimationFrame(() => this.animate());
+  }
+
+  /**
+   * Обновление позиции фигуры
+   */
+  updatePosition() {
+    const prevCenterX = this.polygonCenter.x;
+    const prevCenterY = this.polygonCenter.y;
+
+    this.polygonCenter.x += this.velocity.x;
+    this.polygonCenter.y += this.velocity.y;
+
+    const bounds = this.getPolygonBounds();
+    const padding = 20;
+
+    if (bounds.minX + this.velocity.x < padding) {
+      this.velocity.x = Math.abs(this.velocity.x);
+      this.polygonCenter.x = prevCenterX + this.velocity.x;
+    }
+    else if (bounds.maxX + this.velocity.x > this.canvas.width - padding) {
+      this.velocity.x = -Math.abs(this.velocity.x);
+      this.polygonCenter.x = prevCenterX + this.velocity.x;
+    }
+
+    if (bounds.minY + this.velocity.y < padding) {
+      this.velocity.y = Math.abs(this.velocity.y);
+      this.polygonCenter.y = prevCenterY + this.velocity.y;
+    }
+    else if (bounds.maxY + this.velocity.y > this.canvas.height - padding) {
+      this.velocity.y = -Math.abs(this.velocity.y);
+      this.polygonCenter.y = prevCenterY + this.velocity.y;
+    }
+
+    const deltaX = this.polygonCenter.x - prevCenterX;
+    const deltaY = this.polygonCenter.y - prevCenterY;
+
+    this.polygon = this.polygon.map((point) => ({
+      x: point.x + deltaX,
+      y: point.y + deltaY,
+    }));
+  }
+
+  /**
+   * Получение границ полигона
+   */
+  getPolygonBounds() {
+    if (!this.polygon || this.polygon.length === 0) {
+      return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    }
+
+    let minX = Infinity,
+      maxX = -Infinity;
+    let minY = Infinity,
+      maxY = -Infinity;
+
+    for (const point of this.polygon) {
+      minX = Math.min(minX, point.x);
+      maxX = Math.max(maxX, point.x);
+      minY = Math.min(minY, point.y);
+      maxY = Math.max(maxY, point.y);
+    }
+
+    return { minX, maxX, minY, maxY };
+  }
+
+  /**
+   * Обновление размера canvas (при resize окна)
+   */
+  updateCanvasSize(width, height) {
+    if (this.polygon && this.polygon.length > 0) {
+      const oldCenterX = this.polygonCenter.x;
+      const oldCenterY = this.polygonCenter.y;
+
+      const newCenterX = width / 2;
+      const newCenterY = height / 2;
+
+      const deltaX = newCenterX - oldCenterX;
+      const deltaY = newCenterY - oldCenterY;
+
+      this.polygon = this.polygon.map((point) => ({
+        x: point.x + deltaX,
+        y: point.y + deltaY,
+      }));
+
+      this.polygonCenter = { x: newCenterX, y: newCenterY };
+
+      const newRadius = Math.min(width, height) * 0.3;
+    }
+
+    this.redraw();
+  }
+
   /**
    * Настройка обработчиков событий
    */
   setupEvents() {
-    this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-    this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-    this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e));
-    
+    this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+    this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e));
+    this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+
     // Поддержка touch событий
-    this.canvas.addEventListener('touchstart', (e) => {
+    this.canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
       const touch = e.touches[0];
       this.handleMouseDown(this.getTouchPos(touch));
     });
-    
-    this.canvas.addEventListener('touchmove', (e) => {
+
+    this.canvas.addEventListener("touchmove", (e) => {
       e.preventDefault();
       const touch = e.touches[0];
       this.handleMouseMove(this.getTouchPos(touch));
     });
-    
-    this.canvas.addEventListener('touchend', (e) => {
+
+    this.canvas.addEventListener("touchend", (e) => {
       e.preventDefault();
       this.handleMouseUp(e);
     });
   }
-  
+
   /**
    * Получение позиции мыши относительно canvas
    */
@@ -87,10 +231,10 @@ export class SliceGame {
     const rect = this.canvas.getBoundingClientRect();
     return {
       x: event.clientX - rect.left,
-      y: event.clientY - rect.top
+      y: event.clientY - rect.top,
     };
   }
-  
+
   /**
    * Получение позиции touch относительно canvas
    */
@@ -98,222 +242,286 @@ export class SliceGame {
     const rect = this.canvas.getBoundingClientRect();
     return {
       x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
+      y: touch.clientY - rect.top,
     };
   }
-  
+
   /**
    * Начало рисования линии разреза
    */
   handleMouseDown(event) {
     const pos = event.clientX !== undefined ? this.getMousePos(event) : event;
     this.isDrawing = true;
-    this.currentCut = [pos];
+
+    this.currentCut = [
+      {
+        x: pos.x,
+        y: pos.y,
+        offsetX: pos.x - this.polygonCenter.x,
+        offsetY: pos.y - this.polygonCenter.y,
+      },
+    ];
   }
-  
+
   /**
    * Продолжение рисования линии
    */
   handleMouseMove(event) {
     if (!this.isDrawing) return;
-    
+
     const pos = event.clientX !== undefined ? this.getMousePos(event) : event;
-    
-    // Добавляем точку только если она достаточно далеко от предыдущей
+
     const lastPoint = this.currentCut[this.currentCut.length - 1];
     if (distance(lastPoint, pos) > 5) {
-      this.currentCut.push(pos);
-      this.redraw();
+      this.currentCut.push({
+        x: pos.x,
+        y: pos.y,
+        offsetX: pos.x - this.polygonCenter.x,
+        offsetY: pos.y - this.polygonCenter.y,
+      });
+      if (!this.isMoving) {
+        this.redraw();
+      }
     }
   }
-  
+
   /**
    * Завершение рисования линии
    */
   handleMouseUp(event) {
     if (!this.isDrawing) return;
-    
+
     this.isDrawing = false;
-    
-    // Проверяем валидность разреза
+
+    if (this.cuts.length >= this.targetCuts) {
+      this.currentCut = null;
+      this.redraw();
+      return;
+    }
+
     if (this.isValidCut()) {
       this.cuts.push([...this.currentCut]);
       this.applyCut();
-      
-      // Воспроизводим звук успешного разреза
+
       this.sliceSound.currentTime = 0;
-      this.sliceSound.play().catch(err => console.log('Audio play failed:', err));
+      this.sliceSound
+        .play()
+        .catch((err) => console.log("Audio play failed:", err));
     }
-    
+
     this.currentCut = null;
-    this.redraw();
+    if (!this.isMoving) {
+      this.redraw();
+    }
   }
-  
+
   /**
    * Проверка валидности разреза
    */
   isValidCut() {
     if (!this.currentCut || this.currentCut.length < 2) return false;
-    
-    // Проверяем, что разрез пересекает многоугольник
-    const intersections = findPolygonIntersections(this.currentCut, this.polygon);
-    
-    // Должно быть ровно 2 пересечения (вход и выход)
+
+    const cutPoints = this.currentCut.map((p) => ({ x: p.x, y: p.y }));
+
+    const intersections = findPolygonIntersections(cutPoints, this.polygon);
+
     return intersections.length === 2;
   }
-  
+
   /**
    * Применение разреза к фигуре
    */
   applyCut() {
-    // Подсчитываем количество кусков по формуле:
-    // Pieces = 1 + количество разрезов + количество пересечений между разрезами
-    
     let intersectionCount = 0;
-    
-    // Проверяем пересечения нового разреза с существующими
+
     const currentCut = this.cuts[this.cuts.length - 1];
-    
+
     for (let i = 0; i < this.cuts.length - 1; i++) {
       const existingCut = this.cuts[i];
-      
-      // Проверяем каждый сегмент текущего разреза с каждым сегментом существующего
-      for (let j = 0; j < currentCut.length - 1; j++) {
-        for (let k = 0; k < existingCut.length - 1; k++) {
+
+      const currentCutCoords = this.getCutActualCoordinates(currentCut);
+      const existingCutCoords = this.getCutActualCoordinates(existingCut);
+
+      for (let j = 0; j < currentCutCoords.length - 1; j++) {
+        for (let k = 0; k < existingCutCoords.length - 1; k++) {
           const intersection = lineIntersection(
-            currentCut[j],
-            currentCut[j + 1],
-            existingCut[k],
-            existingCut[k + 1]
+            currentCutCoords[j],
+            currentCutCoords[j + 1],
+            existingCutCoords[k],
+            existingCutCoords[k + 1]
           );
-          
+
           if (intersection) {
             intersectionCount++;
           }
         }
       }
     }
-    
+
     // Формула: количество кусков = 1 + n + c
     // где n - количество разрезов, c - количество пересечений между разрезами
     const totalPieces = 1 + this.cuts.length + intersectionCount;
-    
-    // Обновляем массив pieces (для отображения)
+
     this.pieces = Array(totalPieces).fill(null);
   }
-  
+
+  /**
+   * Получает актуальные координаты разреза с учетом движения фигуры
+   */
+  getCutActualCoordinates(cut) {
+    if (cut[0].offsetX !== undefined && this.isMoving) {
+      return cut.map((p) => ({
+        x: this.polygonCenter.x + p.offsetX,
+        y: this.polygonCenter.y + p.offsetY,
+      }));
+    }
+    return cut;
+  }
+
   /**
    * Получение текущего прогресса
    */
   getProgress() {
+    const currentCuts = this.cuts.length;
+    const currentPieces = this.pieces.length;
+
+    const isFailed =
+      currentPieces > this.targetPieces ||
+      currentCuts > this.targetCuts ||
+      (currentCuts === this.targetCuts && currentPieces !== this.targetPieces);
+
     return {
-      currentCuts: this.cuts.length,
+      currentCuts: currentCuts,
       targetCuts: this.targetCuts,
-      currentPieces: this.pieces.length,
+      currentPieces: currentPieces,
       targetPieces: this.targetPieces,
-      isComplete: this.pieces.length === this.targetPieces,
-      isFailed: this.pieces.length > this.targetPieces
+      isComplete:
+        currentCuts === this.targetCuts && currentPieces === this.targetPieces,
+      isFailed: isFailed,
     };
   }
-  
+
   /**
    * Отрисовка сцены
    */
   redraw() {
     const ctx = this.ctx;
-    
-    // Очистка canvas
+
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // Рисуем многоугольник
+
     this.drawPolygon(this.polygon, this.polygonColor);
-    
-    // Рисуем завершенные разрезы
-    this.cuts.forEach(cut => {
+
+    this.cuts.forEach((cut) => {
       this.drawCut(cut, this.cutColor, 3);
     });
-    
-    // Рисуем текущий разрез
+
     if (this.currentCut && this.currentCut.length > 1) {
       this.drawCut(this.currentCut, this.currentCutColor, 4);
     }
-    
+
     // Рисуем инструкцию
     this.drawInstruction();
   }
-  
+
   /**
    * Рисование многоугольника
    */
   drawPolygon(polygon, color) {
     const ctx = this.ctx;
-    
+
     ctx.beginPath();
     ctx.moveTo(polygon[0].x, polygon[0].y);
-    
+
     for (let i = 1; i < polygon.length; i++) {
       ctx.lineTo(polygon[i].x, polygon[i].y);
     }
-    
+
     ctx.closePath();
-    
+
     // Заливка
     ctx.fillStyle = `${color}22`;
     ctx.fill();
-    
+
     // Контур
     ctx.strokeStyle = color;
     ctx.lineWidth = 3;
     ctx.stroke();
-    
+
     // Рисуем вершины
-    polygon.forEach(point => {
+    polygon.forEach((point) => {
       ctx.beginPath();
       ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
     });
   }
-  
+
   /**
    * Рисование линии разреза
    */
   drawCut(cut, color, width = 2) {
     const ctx = this.ctx;
-    
+
     ctx.beginPath();
-    ctx.moveTo(cut[0].x, cut[0].y);
-    
-    for (let i = 1; i < cut.length; i++) {
-      ctx.lineTo(cut[i].x, cut[i].y);
+
+    if (cut[0].offsetX !== undefined && this.isMoving) {
+      const x = this.polygonCenter.x + cut[0].offsetX;
+      const y = this.polygonCenter.y + cut[0].offsetY;
+      ctx.moveTo(x, y);
+
+      for (let i = 1; i < cut.length; i++) {
+        const px = this.polygonCenter.x + cut[i].offsetX;
+        const py = this.polygonCenter.y + cut[i].offsetY;
+        ctx.lineTo(px, py);
+      }
+    } else {
+      ctx.moveTo(cut[0].x, cut[0].y);
+
+      for (let i = 1; i < cut.length; i++) {
+        ctx.lineTo(cut[i].x, cut[i].y);
+      }
     }
-    
+
     ctx.strokeStyle = color;
     ctx.lineWidth = width;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.stroke();
   }
-  
+
   /**
    * Рисование инструкции
    */
   drawInstruction() {
     const ctx = this.ctx;
     const progress = this.getProgress();
-    
-    ctx.font = 'bold 16px Arial';
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'left';
-    
+
+    ctx.font = "bold 16px Arial";
+    ctx.textAlign = "left";
+
+    if (progress.isFailed) {
+      ctx.fillStyle = "#ff4444";
+    } else if (progress.isComplete) {
+      ctx.fillStyle = "#44ff44";
+    } else {
+      ctx.fillStyle = "#fff";
+    }
+
     const text = `Разрезов: ${progress.currentCuts}/${progress.targetCuts} | Кусков: ${progress.currentPieces}/${progress.targetPieces}`;
     ctx.fillText(text, 20, 30);
+
+    if (progress.currentCuts >= progress.targetCuts && !progress.isComplete) {
+      ctx.font = "bold 14px Arial";
+      ctx.fillStyle = "#ffaa00";
+      ctx.fillText("Достигнут лимит разрезов!", 20, 55);
+    }
   }
-  
+
   /**
    * Очистка игры
    */
   clear() {
+    this.stopMoving();
     this.polygon = null;
     this.cuts = [];
     this.currentCut = null;

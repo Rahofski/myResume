@@ -144,3 +144,100 @@ body {
   color: #fff;
   text-decoration: none;
 }
+
+.login .btn button:hover {
+  color: #ff357a;
+  transition: 0.3s;
+}
+
+#toggle-form-btn {
+  margin-top: 10px;
+  padding: 0;
+}
+
+#toggle-form-btn button {
+  font-size: 0.95em;
+  color: rgba(255, 255, 255, 0.8);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#toggle-form-btn button:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Mobile adaptations */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+    overflow-y: auto;
+  }
+
+  .btn-back-to-site {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .ring {
+    width: 320px;
+    height: 320px;
+  }
+
+  .login {
+    width: 240px;
+    gap: 15px;
+  }
+
+  .login h2 {
+    font-size: 1.5em;
+  }
+
+  .login .inputBx input {
+    padding: 10px 16px;
+    font-size: 1em;
+  }
+
+  .login .btn button {
+    font-size: 0.9em;
+  }
+
+  #toggle-form-btn button {
+    font-size: 0.85em;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .ring {
+    width: 280px;
+    height: 280px;
+  }
+
+  .login {
+    width: 200px;
+    gap: 12px;
+  }
+
+  .login h2 {
+    font-size: 1.3em;
+  }
+
+  .login .inputBx input {
+    padding: 8px 14px;
+    font-size: 0.9em;
+  }
+}
