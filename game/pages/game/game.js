@@ -21,7 +21,6 @@ const levelIntroElement = document.getElementById("levelIntro");
 const gameContentElement = document.getElementById("gameContent");
 const gameAreaElement = document.getElementById("gameArea");
 
-// Кнопки управления
 const startLevelBtn = document.getElementById("startLevelBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const skipLevelBtn = document.getElementById("skipLevelBtn");
@@ -30,7 +29,6 @@ const viewResultsFromGameBtn = document.getElementById(
 );
 const exitBtn = document.getElementById("exitBtn");
 
-// Модальные окна
 const pauseModal = document.getElementById("pauseModal");
 const resumeBtn = document.getElementById("resumeBtn");
 const exitFromPauseBtn = document.getElementById("exitFromPauseBtn");
@@ -54,7 +52,6 @@ let timerInterval = null;
 let isPending = false;
 let sliceGame = null;
 
-// Функция для установки размера canvas на весь экран
 function resizeCanvas() {
   const headerHeight = 60;
   const levelNavHeight = 52; // Панель уровней
@@ -71,16 +68,13 @@ function resizeCanvas() {
     hintHeight -
     padding;
 
-  // Используем максимально возможный размер с пропорциями 4:3
   const aspectRatio = 4 / 3;
   let canvasWidth, canvasHeight;
 
   if (availableWidth / availableHeight > aspectRatio) {
-    // Высота - ограничивающий фактор
     canvasHeight = availableHeight;
     canvasWidth = canvasHeight * aspectRatio;
   } else {
-    // Ширина - ограничивающий фактор
     canvasWidth = availableWidth;
     canvasHeight = canvasWidth / aspectRatio;
   }
@@ -92,18 +86,15 @@ function resizeCanvas() {
   gameCanvas.width = canvasWidth;
   gameCanvas.height = canvasHeight;
 
-  // Если игра уже инициализирована, перерисовываем
   if (sliceGame) {
     sliceGame.updateCanvasSize(canvasWidth, canvasHeight);
   }
 }
 
-// Вызываем при загрузке и при изменении размера окна
 window.addEventListener("resize", () => {
   resizeCanvas();
 });
 
-// Инициализация размера
 resizeCanvas();
 
 function initGame() {
@@ -120,10 +111,8 @@ function initGame() {
 
   sliceGame = new SliceGame(gameCanvas);
 
-  // Инициализируем панель уровней
   initLevelNav();
 
-  // Проверяем, есть ли сохранённое состояние для продолжения
   const tempGameState = localStorage.getItem("tempGameState");
   let startLevel = 1;
 
@@ -135,7 +124,6 @@ function initGame() {
         gameState.currentLevel = startLevel;
         gameState.startLevel(startLevel);
       }
-      // Удаляем временное состояние после использования
       localStorage.removeItem("tempGameState");
     } catch (e) {
       console.error("Ошибка чтения сохранённого состояния:", e);
@@ -146,7 +134,6 @@ function initGame() {
   showLevelIntro(startLevel);
 }
 
-// Обновить интерфейс
 function updateUI() {
   const stats = gameState.getStats();
 
@@ -156,14 +143,11 @@ function updateUI() {
     window.updateScoreDisplay(stats.score);
   }
 
-  // Обновляем таймер
   updateTimerDisplay();
 
-  // Обновляем панель уровней
   updateLevelNav();
 }
 
-// Обновление панели навигации по уровням
 function updateLevelNav() {
   const playerName = getCurrentPlayer();
   if (!playerName) return;
@@ -178,7 +162,6 @@ function updateLevelNav() {
     const levelScore = progress.levelScores[level] || 0;
     const unlocked = isLevelUnlocked(playerName, level);
 
-    // Обновляем очки или замочек
     if (!unlocked) {
       scoreSpan.textContent = "🔒";
     } else if (levelScore > 0) {
@@ -187,10 +170,8 @@ function updateLevelNav() {
       scoreSpan.textContent = "—";
     }
 
-    // Убираем все классы состояния
     btn.classList.remove("active", "completed", "locked");
 
-    // Определяем состояние кнопки
     if (level === gameState.currentLevel) {
       btn.classList.add("active");
     } else if (levelScore > 0) {
@@ -200,13 +181,11 @@ function updateLevelNav() {
     }
   });
 
-  // Обновляем общий счёт
   if (totalScoreElement) {
     totalScoreElement.textContent = getTotalScore(playerName);
   }
 }
 
-// Обработчики кнопок уровней
 function initLevelNav() {
   const levelButtons = document.querySelectorAll(".level-nav-btn");
   const playerName = getCurrentPlayer();
@@ -215,13 +194,11 @@ function initLevelNav() {
     btn.addEventListener("click", () => {
       const level = parseInt(btn.dataset.level);
 
-      // Проверяем, разблокирован ли уровень
       if (!isLevelUnlocked(playerName, level)) {
         alert("Этот уровень ещё заблокирован! Пройдите предыдущие уровни.");
         return;
       }
 
-      // Если игра активна, спрашиваем подтверждение
       if (gameState.isGameActive && level !== gameState.currentLevel) {
         if (
           !confirm(
@@ -236,7 +213,6 @@ function initLevelNav() {
         }
       }
 
-      // Переходим на выбранный уровень
       gameState.currentLevel = level;
       gameState.resetLevelStats();
       gameState.startLevel(level);

@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Результаты и рейтинг игроков в игре 'Разрежь фигуру'">
+  <meta name="theme-color" content="#1a1a2e">
   <title>Результаты</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="results.css">
   <script type="module">
     import { checkAuthAndRedirect } from '../../utils/storage.js';
@@ -106,7 +110,6 @@
 
   <script src="results.js" type="module"></script>
   <script>
-    // Скрыть кнопку "Назад на сайт" если страница в iframe
     if (window.self !== window.top) {
       const backButton = document.querySelector('.btn-back-to-site');
       if (backButton) {

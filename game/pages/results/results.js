@@ -46,12 +46,10 @@ function initResults() {
     try {
       const savedState = JSON.parse(tempGameState);
 
-      // Показываем "Продолжить игру" вместо "Играть снова"
       returnToGameBtn.style.display = "inline-block";
       returnToGameBtn.textContent = "← Продолжить игру";
       playAgainBtn.textContent = "Начать заново";
 
-      // Если игра полностью пройдена - показываем поздравление
       if (savedState.gameComplete) {
         showCompletionMessage();
       }
@@ -110,7 +108,6 @@ function loadPlayerResults() {
 function loadLeaderboard() {
   allResults = getLeaderboard();
 
-  // Обновляем статистику
   totalGamesElement.textContent = allResults.length;
   bestScoreElement.textContent =
     allResults.length > 0 ? allResults[0].score : 0;
@@ -134,13 +131,11 @@ function displayLeaderboard(results) {
       row.classList.add("current-player");
     }
 
-    // Медали для топ-3
     let rankDisplay = index + 1;
     if (index === 0) rankDisplay = "🥇";
     else if (index === 1) rankDisplay = "🥈";
     else if (index === 2) rankDisplay = "🥉";
 
-    // Форматируем время
     const minutes = Math.floor(result.time / 60);
     const seconds = result.time % 60;
     const timeDisplay = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
@@ -230,11 +225,8 @@ function clearRanking() {
   }
 }
 
-// Обработчики событий
 playAgainBtn.addEventListener("click", () => {
-  // Удаляем временное состояние
   localStorage.removeItem("tempGameState");
-  // Сбрасываем прогресс игрока - все уровни закрываются, доступен только первый
   resetPlayerProgress(currentPlayerName);
   window.location.href = "../game/game.html";
 });
@@ -252,13 +244,10 @@ clearDataBtn.addEventListener("click", clearRanking);
 // Фильтры
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    // Убираем active со всех кнопок
     filterButtons.forEach((btn) => btn.classList.remove("active"));
 
-    // Добавляем active на текущую
     button.classList.add("active");
 
-    // Применяем фильтр
     const filter = button.dataset.filter;
     filterLeaderboard(filter);
   });
@@ -266,18 +255,15 @@ filterButtons.forEach((button) => {
 
 // Обработка клавиш
 document.addEventListener("keydown", (e) => {
-  // Enter - играть снова
   if (e.key === "Enter") {
     playAgainBtn.click();
   }
 
-  // N - новый игрок
   if (e.key.toLowerCase() === "n") {
     newPlayerBtn.click();
   }
 });
 
-// Двойной клик по строке таблицы для копирования имени игрока
 leaderboardBodyElement.addEventListener("dblclick", (e) => {
   const row = e.target.closest("tr");
   if (row && !row.querySelector(".no-data")) {
@@ -295,11 +281,8 @@ leaderboardBodyElement.addEventListener("dblclick", (e) => {
   }
 });
 
-// Продолжить игру (вернуться на текущий уровень)
 returnToGameBtn.addEventListener("click", () => {
-  // НЕ удаляем tempGameState - game.js использует его для перехода на нужный уровень
   window.location.href = "../game/game.html";
 });
 
-// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', initResults);

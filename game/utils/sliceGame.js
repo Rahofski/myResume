@@ -10,7 +10,7 @@ import {
 export class SliceGame {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
+    this.ctx = canvas.getContext("2d", { alpha: false }); // Оптимизация: отключаем альфа-канал
 
     this.polygon = null;
     this.cuts = [];
@@ -20,16 +20,15 @@ export class SliceGame {
     this.targetPieces = 0;
     this.pieces = [];
 
-    // Параметры для анимации движения (с уровня 4)
     this.isMoving = false;
     this.velocity = { x: 0, y: 0 };
     this.animationFrame = null;
     this.polygonCenter = { x: 0, y: 0 };
     this.currentLevel = 1;
 
-    // Звук для разреза
-    this.sliceSound = new Audio("../../assets/hit_slash_20827.mp3");
-    this.sliceSound.volume = 0.5;
+    // Ленивая загрузка звука
+    this.sliceSound = null;
+    this.soundLoaded = false;
 
     // Визуальные настройки
     this.polygonColor = "#ff357a";
@@ -38,6 +37,24 @@ export class SliceGame {
 
     // Привязка событий
     this.setupEvents();
+  }
+
+  // Ленивая загрузка звука при первом использовании
+  loadSound() {
+    if (!this.soundLoaded) {
+      this.sliceSound = new Audio("../../assets/hit_slash_20827.mp3");
+      this.sliceSound.volume = 0.5;
+      this.soundLoaded = true;
+    }
+  }
+
+  // Воспроизведение звука
+  playSliceSound() {
+    this.loadSound();
+    if (this.sliceSound) {
+      this.sliceSound.currentTime = 0;
+      this.sliceSound.play().catch(() => {});
+    }
   }
 
   /**
@@ -52,7 +69,6 @@ export class SliceGame {
 
     const centerX = this.canvas.width / 2;
     const centerY = this.canvas.height / 2;
-    // Радиус адаптивный - 25% от меньшей стороны canvas
     const radius = Math.min(this.canvas.width, this.canvas.height) * 0.25;
 
     this.polygon = generateConvexPolygon(sides, centerX, centerY, radius);
@@ -113,45 +129,34 @@ export class SliceGame {
    * Обновление позиции фигуры
    */
   updatePosition() {
-    // Сохраняем предыдущую позицию центра
     const prevCenterX = this.polygonCenter.x;
     const prevCenterY = this.polygonCenter.y;
 
-    // Двигаем центр
     this.polygonCenter.x += this.velocity.x;
     this.polygonCenter.y += this.velocity.y;
 
-    // Вычисляем границы фигуры (находим min/max координаты вершин)
     const bounds = this.getPolygonBounds();
-    const padding = 20; // Отступ от краев canvas
+    const padding = 20;
 
-    // Проверяем столкновение с левым краем
     if (bounds.minX + this.velocity.x < padding) {
       this.velocity.x = Math.abs(this.velocity.x);
       this.polygonCenter.x = prevCenterX + this.velocity.x;
-    }
-    // Проверяем столкновение с правым краем
-    else if (bounds.maxX + this.velocity.x > this.canvas.width - padding) {
+    } else if (bounds.maxX + this.velocity.x > this.canvas.width - padding) {
       this.velocity.x = -Math.abs(this.velocity.x);
       this.polygonCenter.x = prevCenterX + this.velocity.x;
     }
 
-    // Проверяем столкновение с верхним краем
     if (bounds.minY + this.velocity.y < padding) {
       this.velocity.y = Math.abs(this.velocity.y);
       this.polygonCenter.y = prevCenterY + this.velocity.y;
-    }
-    // Проверяем столкновение с нижним краем
-    else if (bounds.maxY + this.velocity.y > this.canvas.height - padding) {
+    } else if (bounds.maxY + this.velocity.y > this.canvas.height - padding) {
       this.velocity.y = -Math.abs(this.velocity.y);
       this.polygonCenter.y = prevCenterY + this.velocity.y;
     }
 
-    // Вычисляем смещение
     const deltaX = this.polygonCenter.x - prevCenterX;
     const deltaY = this.polygonCenter.y - prevCenterY;
 
-    // Сдвигаем все вершины полигона на то же смещение (без пересоздания формы)
     this.polygon = this.polygon.map((point) => ({
       x: point.x + deltaX,
       y: point.y + deltaY,
@@ -185,16 +190,13 @@ export class SliceGame {
    * Обновление размера canvas (при resize окна)
    */
   updateCanvasSize(width, height) {
-    // Если фигура уже существует, масштабируем её позицию
     if (this.polygon && this.polygon.length > 0) {
       const oldCenterX = this.polygonCenter.x;
       const oldCenterY = this.polygonCenter.y;
 
-      // Новый центр пропорционален новому размеру
       const newCenterX = width / 2;
       const newCenterY = height / 2;
 
-      // Смещаем полигон к новому центру
       const deltaX = newCenterX - oldCenterX;
       const deltaY = newCenterY - oldCenterY;
 
@@ -205,9 +207,7 @@ export class SliceGame {
 
       this.polygonCenter = { x: newCenterX, y: newCenterY };
 
-      // Также обновляем радиус фигуры если нужно
       const newRadius = Math.min(width, height) * 0.3;
-      // Масштабирование можно добавить при необходимости
     }
 
     this.redraw();
@@ -269,7 +269,6 @@ export class SliceGame {
     const pos = event.clientX !== undefined ? this.getMousePos(event) : event;
     this.isDrawing = true;
 
-    // Сохраняем смещение относительно центра фигуры (для движущейся фигуры)
     this.currentCut = [
       {
         x: pos.x,
@@ -288,7 +287,6 @@ export class SliceGame {
 
     const pos = event.clientX !== undefined ? this.getMousePos(event) : event;
 
-    // Добавляем точку только если она достаточно далеко от предыдущей
     const lastPoint = this.currentCut[this.currentCut.length - 1];
     if (distance(lastPoint, pos) > 5) {
       this.currentCut.push({
@@ -297,7 +295,6 @@ export class SliceGame {
         offsetX: pos.x - this.polygonCenter.x,
         offsetY: pos.y - this.polygonCenter.y,
       });
-      // Не вызываем redraw здесь, если фигура движется - это делает animate()
       if (!this.isMoving) {
         this.redraw();
       }
@@ -312,7 +309,6 @@ export class SliceGame {
 
     this.isDrawing = false;
 
-    // Проверяем, не превышен ли лимит разрезов
     if (this.cuts.length >= this.targetCuts) {
       this.currentCut = null;
       this.redraw();
@@ -323,10 +319,7 @@ export class SliceGame {
       this.cuts.push([...this.currentCut]);
       this.applyCut();
 
-      this.sliceSound.currentTime = 0;
-      this.sliceSound
-        .play()
-        .catch((err) => console.log("Audio play failed:", err));
+      this.playSliceSound();
     }
 
     this.currentCut = null;
@@ -343,10 +336,8 @@ export class SliceGame {
 
     const cutPoints = this.currentCut.map((p) => ({ x: p.x, y: p.y }));
 
-    // Проверяем, что разрез пересекает многоугольник
     const intersections = findPolygonIntersections(cutPoints, this.polygon);
 
-    // Должно быть ровно 2 пересечения (вход и выход)
     return intersections.length === 2;
   }
 
@@ -407,10 +398,6 @@ export class SliceGame {
     const currentCuts = this.cuts.length;
     const currentPieces = this.pieces.length;
 
-    // Уровень провален если:
-    // 1. Превышен лимит кусков
-    // 2. Превышен лимит разрезов
-    // 3. Использованы все разрезы, но кусков недостаточно или слишком много
     const isFailed =
       currentPieces > this.targetPieces ||
       currentCuts > this.targetCuts ||
@@ -433,18 +420,14 @@ export class SliceGame {
   redraw() {
     const ctx = this.ctx;
 
-    // Очистка canvas
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Рисуем многоугольник
     this.drawPolygon(this.polygon, this.polygonColor);
 
-    // Рисуем завершенные разрезы
     this.cuts.forEach((cut) => {
       this.drawCut(cut, this.cutColor, 3);
     });
 
-    // Рисуем текущий разрез
     if (this.currentCut && this.currentCut.length > 1) {
       this.drawCut(this.currentCut, this.currentCutColor, 4);
     }
@@ -494,7 +477,6 @@ export class SliceGame {
 
     ctx.beginPath();
 
-    // Если разрез имеет смещения (для движущейся фигуры), пересчитываем позиции
     if (cut[0].offsetX !== undefined && this.isMoving) {
       const x = this.polygonCenter.x + cut[0].offsetX;
       const y = this.polygonCenter.y + cut[0].offsetY;
@@ -506,7 +488,6 @@ export class SliceGame {
         ctx.lineTo(px, py);
       }
     } else {
-      // Обычная отрисовка для неподвижной фигуры
       ctx.moveTo(cut[0].x, cut[0].y);
 
       for (let i = 1; i < cut.length; i++) {
@@ -531,7 +512,6 @@ export class SliceGame {
     ctx.font = "bold 16px Arial";
     ctx.textAlign = "left";
 
-    // Изменяем цвет в зависимости от состояния
     if (progress.isFailed) {
       ctx.fillStyle = "#ff4444";
     } else if (progress.isComplete) {
